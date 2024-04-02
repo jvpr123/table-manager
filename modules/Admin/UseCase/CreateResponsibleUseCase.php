@@ -4,7 +4,7 @@ namespace Modules\Admin\UseCase;
 
 use Modules\Admin\Domain\Entity\ResponsibleEntity;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
-use Modules\Admin\DTO\Responsible\CreateResponsibleOutputDTO;
+use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
 
 class CreateResponsibleUseCase
@@ -13,13 +13,13 @@ class CreateResponsibleUseCase
     {
     }
 
-    public function execute(CreateResponsibleInputDTO $input): CreateResponsibleOutputDTO
+    public function execute(CreateResponsibleInputDTO $input): ResponsibleOutputDTO
     {
         $responsible = new ResponsibleEntity($input->name);
 
         $this->responsibleRepository->create($responsible);
 
-        return new CreateResponsibleOutputDTO(
+        return new ResponsibleOutputDTO(
             id: $responsible->getId()->value,
             name: $responsible->getName(),
             createdAt: $responsible->getCreatedAt(),

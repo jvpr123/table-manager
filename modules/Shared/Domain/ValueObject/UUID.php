@@ -2,7 +2,7 @@
 
 namespace Modules\Shared\Domain\ValueObject;
 
-use Modules\Shared\Domain\Exceptions\InvalidUuidException;
+use Modules\Shared\Exceptions\InvalidUuidException;
 
 class UUID implements ValueObjectInterface
 {

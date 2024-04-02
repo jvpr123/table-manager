@@ -4,7 +4,7 @@ namespace Modules\Admin\DTO\Responsible;
 
 use Carbon\Carbon;
 
-class CreateResponsibleOutputDTO
+class ResponsibleOutputDTO
 {
     public function __construct(
         public string $id,

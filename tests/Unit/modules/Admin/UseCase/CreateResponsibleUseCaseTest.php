@@ -4,7 +4,7 @@ namespace Tests\Unit\Modules\Admin\UseCase;
 
 use Modules\Admin\Domain\Entity\ResponsibleEntity;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
-use Modules\Admin\DTO\Responsible\CreateResponsibleOutputDTO;
+use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
 use Modules\Admin\UseCase\CreateResponsibleUseCase;
 
@@ -23,7 +23,7 @@ describe('CreateResponsibleUseCase unit tests', function () {
 
         $output = $this->useCase->execute($this->input);
 
-        expect($output)->toBeInstanceOf(CreateResponsibleOutputDTO::class);
+        expect($output)->toBeInstanceOf(ResponsibleOutputDTO::class);
         expect($output->id)->toBeString();
         expect($output->name)->toBe($this->input->name);
         expect($output->createdAt->toString())->toBe(now()->toString());

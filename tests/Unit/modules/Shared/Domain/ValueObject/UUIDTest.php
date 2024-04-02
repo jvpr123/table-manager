@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Modules\Shared\Domain\ValueObject;
 
-use Modules\Shared\Domain\Exceptions\InvalidUuidException;
+use Modules\Shared\Exceptions\InvalidUuidException;
 use Modules\Shared\Domain\ValueObject\UUID;
 
 describe('UUID validation unit tests', function () {
