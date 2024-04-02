@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Modules\Admin\UseCase;
 
-use Modules\Admin\Domain\Entity\ResponsibleEntity;
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
@@ -18,7 +18,7 @@ describe('CreateResponsibleUseCase unit tests', function () {
     it('should create a responsible successfully', function () {
         $this->mockResponsibleRepository
             ->expects()
-            ->create(\Mockery::type(ResponsibleEntity::class))
+            ->create(\Mockery::type(Responsible::class))
             ->once();
 
         $output = $this->useCase->execute($this->input);
@@ -33,7 +33,7 @@ describe('CreateResponsibleUseCase unit tests', function () {
     it('should throw exception on repository error', function () {
         $this->mockResponsibleRepository
             ->expects()
-            ->create(\Mockery::type(ResponsibleEntity::class))
+            ->create(\Mockery::type(Responsible::class))
             ->andThrow(new \Exception('Repository error.'))
             ->once();
 

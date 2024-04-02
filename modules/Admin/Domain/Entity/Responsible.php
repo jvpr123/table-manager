@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Modules\Shared\Domain\Entity\BaseEntity;
 use Modules\Shared\Domain\ValueObject\UUID;
 
-class ResponsibleEntity extends BaseEntity
+class Responsible extends BaseEntity
 {
     public function __construct(
         private string $name,

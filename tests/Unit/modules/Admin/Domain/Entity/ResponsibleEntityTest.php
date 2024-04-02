@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Modules\Shared\Domain\Entity;
 
-use Modules\Admin\Domain\Entity\ResponsibleEntity;
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Shared\Domain\ValueObject\UUID;
 
 describe('Responsible Entity unit tests', function () {
     beforeEach(function () {
-        $this->responsible = new ResponsibleEntity($this->name = 'responsible_name');
+        $this->responsible = new Responsible($this->name = 'responsible_name');
     });
 
     it('should generate a responsible entity successfully', function () {

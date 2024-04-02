@@ -2,7 +2,7 @@
 
 namespace Modules\Admin\UseCase;
 
-use Modules\Admin\Domain\Entity\ResponsibleEntity;
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
@@ -15,7 +15,7 @@ class CreateResponsibleUseCase
 
     public function execute(CreateResponsibleInputDTO $input): ResponsibleOutputDTO
     {
-        $responsible = new ResponsibleEntity($input->name);
+        $responsible = new Responsible($input->name);
 
         $this->responsibleRepository->create($responsible);
 
