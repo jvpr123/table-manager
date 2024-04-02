@@ -2,18 +2,18 @@
 
 namespace Modules\Admin\Gateway;
 
-use Modules\Admin\Domain\Entity\ResponsibleEntity;
+use Modules\Admin\Domain\Entity\Responsible;
 
 interface ResponsibleGateway
 {
-    public function create(ResponsibleEntity $responsible): void;
+    public function create(Responsible $responsible): void;
 
-    public function update(ResponsibleEntity $responsible): void;
+    public function update(Responsible $responsible): void;
 
-    public function find(string $id): ?ResponsibleEntity;
+    public function find(string $id): ?Responsible;
 
     /**
-     * @return ResponsibleEntity[]
+     * @return Responsible[]
      */
     public function list(): array;
 
