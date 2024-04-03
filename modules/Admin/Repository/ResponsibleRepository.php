@@ -3,8 +3,10 @@
 namespace Modules\Admin\Repository;
 
 use App\Models\Responsible as ResponsibleModel;
+use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Gateway\ResponsibleGateway;
+use Modules\Shared\Domain\ValueObject\UUID;
 
 class ResponsibleRepository implements ResponsibleGateway
 {
@@ -26,7 +28,16 @@ class ResponsibleRepository implements ResponsibleGateway
 
     public function find(string $id): ?Responsible
     {
-        return null;
+        $responsibleModel = ResponsibleModel::where('uuid', $id)->first();
+
+        return $responsibleModel
+            ? new Responsible(
+                id: new UUID($responsibleModel->uuid),
+                name: $responsibleModel->name,
+                createdAt: new Carbon($responsibleModel->created_at),
+                updatedAt: new Carbon($responsibleModel->updated_at),
+            )
+            : null;
     }
 
     /**
