@@ -30,13 +30,14 @@ describe('CreateResponsibleUseCase unit tests', function () {
         expect($output->updatedAt->toString())->toBe(now()->toString());
     });
 
-    it('should throw exception on repository error', function () {
+    it('should throw exception on creating responsible error', function () {
         $this->mockResponsibleRepository
             ->expects()
             ->create(\Mockery::type(Responsible::class))
-            ->andThrow(new \Exception('Repository error.'))
+            ->andThrow(new \Exception('Error creating responsible.'))
             ->once();
 
-        $this->useCase->execute($this->input);
-    })->throws(\Exception::class, 'Repository error.');
+        expect(fn () => $this->useCase->execute($this->input))
+            ->toThrow(new \Exception('Error creating responsible.'));
+    });
 });

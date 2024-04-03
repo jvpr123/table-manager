@@ -18,7 +18,7 @@ class FindResponsibleByIdUseCase
         $responsible = $this->responsibleRepository->find($id);
 
         if (!$responsible) {
-            throw new EntityNotFoundException(Responsible::class, $id);
+            throw new EntityNotFoundException('Responsible', $id);
         }
 
         return new ResponsibleOutputDTO(

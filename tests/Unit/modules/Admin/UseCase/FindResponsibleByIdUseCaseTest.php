@@ -37,16 +37,18 @@ describe('FindResponsibleByIdUseCase unit tests', function () {
             ->andReturnNull()
             ->once();
 
-        $this->useCase->execute($this->responsibleId);
-    })->throws(EntityNotFoundException::class);
+        expect(fn () => $this->useCase->execute($this->responsibleId))
+            ->toThrow(new EntityNotFoundException('Responsible', $this->responsibleId));
+    });
 
     it('should throw exception on repository error', function () {
         $this->mockResponsibleRepository
             ->expects()
             ->find($this->responsibleId)
-            ->andThrow(new \Exception('Repository error.'))
+            ->andThrow(new \Exception('Error getting responsible.'))
             ->once();
 
-        $this->useCase->execute($this->responsibleId);
-    })->throws(\Exception::class, 'Repository error.');
+        expect(fn () => $this->useCase->execute($this->responsibleId))
+            ->toThrow(new \Exception('Error getting responsible.'));
+    });
 });

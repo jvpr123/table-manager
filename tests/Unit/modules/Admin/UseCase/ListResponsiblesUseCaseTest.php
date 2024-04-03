@@ -49,9 +49,10 @@ describe('ListResponsiblesUseCase unit tests', function () {
         $this->mockResponsibleRepository
             ->expects()
             ->list()
-            ->andThrow(new \Exception('Repository error.'))
+            ->andThrow(new \Exception('Error getting responsibles.'))
             ->once();
 
-        $this->useCase->execute();
-    })->throws(\Exception::class, 'Repository error.');
+        expect(fn () => $this->useCase->execute())
+            ->toThrow(new \Exception('Error getting responsibles.'));
+    });
 });
