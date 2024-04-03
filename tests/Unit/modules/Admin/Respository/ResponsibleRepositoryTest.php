@@ -33,3 +33,31 @@ describe('ResponsibleRepository create unit tests', function () {
         $this->assertDatabaseMissing('responsibles', ['uuid' => $this->responsible->getId()->value]);
     });
 });
+
+describe('ResponsibleRepository find unit tests', function () {
+    beforeEach(function () {
+        $this->responsibleEntity = new Responsible('responsible_name');
+        $this->responsibleId = $this->responsibleEntity->getId()->value;
+        $this->responsibleModel = ResponsibleModel::factory()->create([
+            'uuid' => $this->responsibleEntity->getId()->value,
+            'name' => $this->responsibleEntity->getName(),
+            'created_at' => $this->responsibleEntity->getCreatedAt(),
+            'updated_at' => $this->responsibleEntity->getUpdatedAt(),
+        ]);
+
+        $this->repository = new ResponsibleRepository();
+    });
+
+    it('should retrieve a responsible from database successfully', function () {
+        $output = $this->repository->find($this->responsibleId);
+
+        expect($output)->toBeInstanceOf(Responsible::class);
+        expect($output->getId()->value)->toBe($this->responsibleId);
+    });
+
+    it('should return null if responsible not found', function () {
+        $output = $this->repository->find('');
+
+        expect($output)->toBeNull();
+    });
+});
