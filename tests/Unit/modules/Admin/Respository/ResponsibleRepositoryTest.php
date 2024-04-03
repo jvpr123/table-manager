@@ -50,14 +50,38 @@ describe('ResponsibleRepository find unit tests', function () {
 
     it('should retrieve a responsible from database successfully', function () {
         $output = $this->repository->find($this->responsibleId);
-
         expect($output)->toBeInstanceOf(Responsible::class);
         expect($output->getId()->value)->toBe($this->responsibleId);
     });
 
     it('should return null if responsible not found', function () {
-        $output = $this->repository->find('');
+        expect($this->repository->find(''))->toBeNull();
+    });
+});
 
-        expect($output)->toBeNull();
+describe('ResponsibleRepository list unit tests', function () {
+    beforeEach(fn () => $this->repository = new ResponsibleRepository());
+
+    it('should retrieve all responsibles from database successfully', function () {
+        $responsibleEntities = [
+            new Responsible('responsible_a'),
+            new Responsible('responsible_b'),
+        ];
+
+        foreach ($responsibleEntities as $re) {
+            ResponsibleModel::factory()->create([
+                'uuid' => $re->getId()->value,
+                'name' => $re->getName(),
+                'created_at' => $re->getCreatedAt(),
+                'updated_at' => $re->getUpdatedAt(),
+            ]);
+        }
+
+        $output = $this->repository->list();
+        expect($output)->toHaveCount(count($responsibleEntities));
+    });
+
+    it('should return empty array if no responsible found', function () {
+        expect($this->repository->list())->toBeEmpty();
     });
 });
