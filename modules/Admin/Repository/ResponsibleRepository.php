@@ -45,7 +45,14 @@ class ResponsibleRepository implements ResponsibleGateway
      */
     public function list(): array
     {
-        return [];
+        $responsibleModels = ResponsibleModel::all();
+
+        return $responsibleModels->map(fn (ResponsibleModel $responsible) => new Responsible(
+            id: new UUID($responsible->uuid),
+            name: $responsible->name,
+            createdAt: new Carbon($responsible->created_at),
+            updatedAt: new Carbon($responsible->updated_at),
+        ))->toArray();
     }
 
     public function delete(string $id): void
