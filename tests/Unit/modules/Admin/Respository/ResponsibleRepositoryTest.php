@@ -85,3 +85,31 @@ describe('ResponsibleRepository list unit tests', function () {
         expect($this->repository->list())->toBeEmpty();
     });
 });
+
+describe('ResponsibleRepository delete unit tests', function () {
+    beforeEach(function () {
+        $this->responsibleModel = ResponsibleModel::factory()->create(['uuid' => uuid_create()]);
+        $this->repository = new ResponsibleRepository();
+    });
+
+    it('should return true if responsible deletion succeeded', function () {
+        $this->assertDatabaseHas('responsibles', ['uuid' => $this->responsibleModel->uuid]);
+
+        $output = $this->repository->delete($this->responsibleModel->uuid);
+
+        expect($output)->toBeTrue();
+        $this->assertDatabaseMissing('responsibles', ['uuid' => $this->responsibleModel->uuid]);
+    });
+
+    it('should return false if responsible deletion failed', function () {
+        $output = $this->repository->delete('invalid_uuid');
+        expect($output)->toBeFalse();
+    });
+
+    it('should throw exception on responsible deletion error', function () {
+        expect(function () {
+            ResponsibleModel::deleting(throw new \Exception('Error deleting responsible.'));
+            $this->repository->delete($this->responsibleModel->uuid);
+        })->toThrow(new \Exception('Error deleting responsible.'));
+    });
+});

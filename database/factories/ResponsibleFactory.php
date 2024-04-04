@@ -17,7 +17,8 @@ class ResponsibleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'uuid' => uuid_create(),
+            'name' => fake()->name(),
         ];
     }
 }
