@@ -8,7 +8,7 @@ interface ResponsibleGateway
 {
     public function create(Responsible $responsible): void;
 
-    public function update(Responsible $responsible): void;
+    public function update(Responsible $responsible): bool;
 
     public function find(string $id): ?Responsible;
 
@@ -17,5 +17,5 @@ interface ResponsibleGateway
      */
     public function list(): array;
 
-    public function delete(string $id): void;
+    public function delete(string $id): bool;
 }
