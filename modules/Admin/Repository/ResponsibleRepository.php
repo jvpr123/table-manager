@@ -4,7 +4,6 @@ namespace Modules\Admin\Repository;
 
 use App\Models\Responsible as ResponsibleModel;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Gateway\ResponsibleGateway;
 use Modules\Shared\Domain\ValueObject\UUID;
@@ -25,7 +24,13 @@ class ResponsibleRepository implements ResponsibleGateway
 
     public function update(Responsible $responsible): bool
     {
-        return false;
+        $id = $responsible->getId()->value;
+        $result = ResponsibleModel::where('uuid', $id)->update([
+            'name' => $responsible->getName(),
+            'updated_at' => $responsible->getUpdatedAt(),
+        ]);
+
+        return (bool) $result;
     }
 
     public function find(string $id): ?Responsible

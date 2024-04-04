@@ -2,7 +2,6 @@
 
 namespace Modules\Admin\UseCase;
 
-use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
 use Modules\Shared\Exceptions\EntityNotFoundException;
