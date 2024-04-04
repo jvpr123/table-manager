@@ -34,6 +34,47 @@ describe('ResponsibleRepository create unit tests', function () {
     });
 });
 
+describe('ResponsibleRepository update unit tests', function () {
+    beforeEach(function () {
+        $this->responsibleEntity = new Responsible('responsible_name');
+        $this->repository = new ResponsibleRepository();
+    });
+
+    it('should return true if responsible update succeeded', function () {
+        $this->responsibleModel = ResponsibleModel::factory()->create([
+            'uuid' => $this->responsibleEntity->getId()->value,
+            'name' => $this->responsibleEntity->getName(),
+            'created_at' => $this->responsibleEntity->getCreatedAt(),
+            'updated_at' => $this->responsibleEntity->getUpdatedAt(),
+        ]);
+
+        $this->responsibleEntity->setName($name = 'updated_name');
+        $this->responsibleEntity->setUpdatedAt($date = now()->addDay());
+
+        $output = $this->repository->update($this->responsibleEntity);
+
+        expect($output)->toBeTrue();
+        $this->assertDatabaseHas('responsibles', [
+            'uuid' => $this->responsibleModel->uuid,
+            'name' => $name,
+            'updated_at' => $date->format('Y-m-d H:i:s'),
+            'created_at' => $this->responsibleModel->created_at,
+        ]);
+    });
+
+    it('should return false if responsible deletion failed', function () {
+        $output = $this->repository->update($this->responsibleEntity);
+        expect($output)->toBeFalse();
+    });
+
+    it('should throw exception on responsible update error', function () {
+        expect(function () {
+            ResponsibleModel::updating(throw new \Exception('Error updating responsible.'));
+            $this->repository->update($this->responsibleEntity);
+        })->toThrow(new \Exception('Error updating responsible.'));
+    });
+});
+
 describe('ResponsibleRepository find unit tests', function () {
     beforeEach(function () {
         $this->responsibleEntity = new Responsible('responsible_name');
