@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Admin\UseCase;
+namespace Modules\Admin\UseCase\Responsible;
 
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;

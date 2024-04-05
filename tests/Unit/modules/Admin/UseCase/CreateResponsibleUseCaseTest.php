@@ -6,7 +6,7 @@ use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Admin\UseCase\CreateResponsibleUseCase;
+use Modules\Admin\UseCase\Responsible\CreateResponsibleUseCase;
 
 describe('CreateResponsibleUseCase unit tests', function () {
     beforeEach(function () {

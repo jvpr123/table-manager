@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Admin\UseCase;
+namespace Modules\Admin\UseCase\Responsible;
 
 use Modules\Admin\Gateway\ResponsibleGateway;
 use Modules\Shared\Exceptions\EntityNotFoundException;

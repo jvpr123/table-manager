@@ -6,7 +6,7 @@ use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\DTO\Responsible\UpdateResponsibleInputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Admin\UseCase\UpdateResponsibleUseCase;
+use Modules\Admin\UseCase\Responsible\UpdateResponsibleUseCase;
 use Modules\Shared\Exceptions\EntityNotFoundException;
 
 describe('UpdateResponsibleUseCase unit tests', function () {

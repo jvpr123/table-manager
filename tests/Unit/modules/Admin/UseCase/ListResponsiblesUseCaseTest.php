@@ -4,7 +4,7 @@ namespace Tests\Unit\Modules\Admin\UseCase;
 
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Admin\UseCase\ListResponsiblesUseCase;
+use Modules\Admin\UseCase\Responsible\ListResponsiblesUseCase;
 
 describe('ListResponsiblesUseCase unit tests', function () {
     beforeEach(function () {

@@ -1,30 +1,29 @@
 <?php
 
-namespace Modules\Admin\UseCase;
+namespace Modules\Admin\UseCase\Responsible;
 
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Shared\Exceptions\EntityNotFoundException;
 
-class FindResponsibleByIdUseCase
+class ListResponsiblesUseCase
 {
     public function __construct(private ResponsibleGateway $responsibleRepository)
     {
     }
 
-    public function execute(string $id): ResponsibleOutputDTO
+    /**
+     * @return ResponsibleOutputDTO[]
+     */
+    public function execute(): array
     {
-        $responsible = $this->responsibleRepository->find($id);
+        $responsibles = $this->responsibleRepository->list();
 
-        if (!$responsible) {
-            throw new EntityNotFoundException('Responsible', $id);
-        }
-
-        return new ResponsibleOutputDTO(
+        return array_map(fn (Responsible $responsible) => new ResponsibleOutputDTO(
             id: $responsible->getId()->value,
             name: $responsible->getName(),
             createdAt: $responsible->getCreatedAt(),
             updatedAt: $responsible->getUpdatedAt(),
-        );
+        ), $responsibles);
     }
 }

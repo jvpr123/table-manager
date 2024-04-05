@@ -5,7 +5,7 @@ namespace Tests\Unit\Modules\Admin\UseCase;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Admin\UseCase\FindResponsibleByIdUseCase;
+use Modules\Admin\UseCase\Responsible\FindResponsibleByIdUseCase;
 use Modules\Shared\Exceptions\EntityNotFoundException;
 
 describe('FindResponsibleByIdUseCase unit tests', function () {

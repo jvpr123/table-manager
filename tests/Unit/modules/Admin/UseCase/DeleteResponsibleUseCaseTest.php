@@ -3,10 +3,8 @@
 namespace Tests\Unit\Modules\Admin\UseCase;
 
 use Modules\Admin\Domain\Entity\Responsible;
-use Modules\Admin\DTO\Responsible\ResponsibleOutputDTO;
-use Modules\Admin\DTO\Responsible\UpdateResponsibleInputDTO;
 use Modules\Admin\Gateway\ResponsibleGateway;
-use Modules\Admin\UseCase\DeleteResponsibleUseCase;
+use Modules\Admin\UseCase\Responsible\DeleteResponsibleUseCase;
 use Modules\Shared\Exceptions\EntityNotFoundException;
 
 describe('DeleteResponsibleUseCase unit tests', function () {
