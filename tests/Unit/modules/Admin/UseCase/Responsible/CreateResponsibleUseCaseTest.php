@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Modules\Admin\UseCase;
+namespace Tests\Unit\Modules\Admin\UseCase\Responsible;
 
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
