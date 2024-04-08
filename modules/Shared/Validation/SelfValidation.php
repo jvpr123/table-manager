@@ -2,6 +2,7 @@
 
 namespace Modules\Shared\Validation;
 
+use Modules\Shared\Exceptions\EntityValidationException;
 use Modules\Shared\Exceptions\UndefinedEntityProperty;
 
 trait SelfValidation
@@ -33,7 +34,7 @@ trait SelfValidation
     public function validate(): self
     {
         if (!empty($this->errors)) {
-            throw new \Exception();
+            throw new EntityValidationException(self::class, $this->errors);
         }
 
         return $this;
