@@ -8,6 +8,7 @@ class EntityValidationException extends Exception
 {
     public function __construct(string $entity, private array $errors)
     {
+        $entity = class_basename($entity);
         parent::__construct("Errors found in $entity validation.");
     }
 
