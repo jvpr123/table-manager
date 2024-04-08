@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Modules\Shared\Validation;
 
+use Modules\Shared\Exceptions\EntityValidationException;
 use Modules\Shared\Exceptions\UndefinedEntityProperty;
 use Modules\Shared\Validation\SelfValidation;
 
@@ -28,7 +29,6 @@ describe('SelfValidation field register unit tests', function () {
 
 describe('SelfValidation error register unit tests', function () {
     beforeEach(function () {
-
         $this->trait = new class
         {
             use SelfValidation;
@@ -74,5 +74,29 @@ describe('SelfValidation error register unit tests', function () {
             'pushError',
             ['invalid_field', 'Error on invalid field.']
         ))->toThrow(new UndefinedEntityProperty($this->trait::class, 'invalid_field'));
+    });
+});
+
+describe('SelfValidation validation unit tests', function () {
+    beforeEach(function () {
+        $this->trait = new class
+        {
+            use SelfValidation;
+            public string $name;
+        };
+    });
+
+    it('should return entity instance if there are no errors registered successfully', function () {
+        $output = $this->trait->validate();
+        expect($output)->toBe($this->trait);
+    });
+
+    it('should throw exception if there are errors registered', function () {
+        $this->setPrivateProperty($this->trait, 'errors', ['name' => ['Field name is required.']]);
+        expect(fn () => $this->trait->validate())
+            ->toThrow(new EntityValidationException(
+                $this->trait::class,
+                $this->getPrivateProperty($this->trait, 'errors')
+            ));
     });
 });
