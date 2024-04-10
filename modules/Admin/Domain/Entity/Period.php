@@ -5,10 +5,17 @@ namespace Modules\Admin\Domain\Entity;
 use Carbon\Carbon;
 use Modules\Shared\Domain\Entity\BaseEntity;
 use Modules\Shared\Domain\ValueObject\UUID;
+use Modules\Shared\Exceptions\EntityAlreadyRelatedException;
 
+/**
+ * @property string[] $meetingsIds
+ *
+ * @package Period
+ */
 class Period extends BaseEntity
 {
     private string $time;
+    private array $meetingsIds = [];
 
     public function __construct(
         Carbon $time,
@@ -28,5 +35,30 @@ class Period extends BaseEntity
     public function setTime(Carbon $time): void
     {
         $this->time = $time->format('H:i');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMeetingsIds(): array
+    {
+        return $this->meetingsIds;
+    }
+
+    public function addMeeting(Meeting $meeting): void
+    {
+        $meetingAlreadyRelated = in_array($meeting->getId()->value, $this->meetingsIds);
+
+        if ($meetingAlreadyRelated) {
+            throw new EntityAlreadyRelatedException($this, $meeting);
+        }
+
+        array_push($this->meetingsIds, $meeting->getId()->value);
+    }
+
+    public function removeMeeting(Meeting $meeting): void
+    {
+        $index = array_search($meeting->getId()->value, $this->meetingsIds);
+        unset($this->meetingsIds[$index]);
     }
 }

@@ -9,14 +9,12 @@ use Modules\Shared\Exceptions\EntityAlreadyRelatedException;
 
 /**
  * @property string[] $meetingsIds
- * @property Meeting[] $meetings
  *
  * @package Responsible
  */
 class Responsible extends BaseEntity
 {
     private array $meetingsIds = [];
-    private array $meetings = [];
 
     public function __construct(
         private string $name,
