@@ -5,7 +5,7 @@ namespace Tests\Unit\Modules\Shared\Domain\Entity;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Shared\Domain\ValueObject\UUID;
 
-describe('Responsible Entity unit tests', function () {
+describe('Local Entity unit tests', function () {
     beforeEach(fn () => $this->local = new Local(
         title: $this->title = 'local_title',
         description: $this->description = 'local_description',
