@@ -6,9 +6,9 @@ use App\Models\Period as PeriodModel;
 use Modules\Admin\Domain\Entity\Period;
 use Modules\Admin\Repository\PeriodRepository;
 
-describe('PeriodRepository create unit tests', function () {
+describe('PeriodRepository create() unit tests', function () {
     beforeEach(function () {
-        $this->period = new Period(time: $this->time = now());
+        $this->period = new Period(time: $this->time = now()->format('H:i'));
         $this->repository = new PeriodRepository();
     });
 
@@ -31,5 +31,30 @@ describe('PeriodRepository create unit tests', function () {
         })->toThrow(new \Exception('Error saving period.'));
 
         $this->assertDatabaseMissing('periods', ['uuid' => $this->period->getId()->value]);
+    });
+});
+
+describe('PeriodRepository find() unit tests', function () {
+    beforeEach(function () {
+        $this->periodEntity = new Period(time: $this->time = now());
+        $this->periodId = $this->periodEntity->getId()->value;
+        $this->periodModel = PeriodModel::factory()->create([
+            'uuid' => $this->periodEntity->getId()->value,
+            'time' => $this->periodEntity->getTime(),
+            'created_at' => $this->periodEntity->getCreatedAt(),
+            'updated_at' => $this->periodEntity->getUpdatedAt(),
+        ]);
+
+        $this->repository = new PeriodRepository();
+    });
+
+    it('should retrieve a period from database successfully', function () {
+        $output = $this->repository->find($this->periodId);
+        expect($output)->toBeInstanceOf(Period::class);
+        expect($output->getId()->value)->toBe($this->periodId);
+    });
+
+    it('should return null if period not found', function () {
+        expect($this->repository->find(id: ''))->toBeNull();
     });
 });
