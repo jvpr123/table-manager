@@ -58,3 +58,30 @@ describe('PeriodRepository find() unit tests', function () {
         expect($this->repository->find(id: ''))->toBeNull();
     });
 });
+
+describe('PeriodRepository list() unit tests', function () {
+    beforeEach(fn () => $this->repository = new PeriodRepository());
+
+    it('should retrieve all periods from database successfully', function () {
+        $periodEntities = [
+            new Period(time: '8:30'),
+            new Period(time: '9:00'),
+        ];
+
+        foreach ($periodEntities as $pe) {
+            PeriodModel::factory()->create([
+                'uuid' => $pe->getId()->value,
+                'time' => $pe->getTime(),
+                'created_at' => $pe->getCreatedAt(),
+                'updated_at' => $pe->getUpdatedAt(),
+            ]);
+        }
+
+        $output = $this->repository->list();
+        expect($output)->toHaveCount(count($periodEntities));
+    });
+
+    it('should return empty array if no period found', function () {
+        expect($this->repository->list())->toBeEmpty();
+    });
+});
