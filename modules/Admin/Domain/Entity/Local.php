@@ -18,7 +18,7 @@ class Local extends BaseEntity
 
     public function __construct(
         private string $title,
-        private string $description,
+        private ?string $description = null,
         ?UUID $id = null,
         ?Carbon $createdAt = null,
         ?Carbon $updatedAt = null
@@ -36,12 +36,12 @@ class Local extends BaseEntity
         $this->title = $title;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(?string $description = null): void
     {
         $this->description = $description;
     }
