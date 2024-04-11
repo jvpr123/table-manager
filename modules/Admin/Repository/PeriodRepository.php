@@ -56,6 +56,6 @@ class PeriodRepository implements PeriodGateway
 
     public function delete(string $id): bool
     {
-        return false;
+        return (bool) PeriodModel::where('uuid', $id)->delete();
     }
 }
