@@ -85,3 +85,31 @@ describe('PeriodRepository list() unit tests', function () {
         expect($this->repository->list())->toBeEmpty();
     });
 });
+
+describe('PeriodRepository delete() unit tests', function () {
+    beforeEach(function () {
+        $this->periodModel = PeriodModel::factory()->create(['uuid' => uuid_create()]);
+        $this->repository = new PeriodRepository();
+    });
+
+    it('should return true if period deletion succeeded', function () {
+        $this->assertDatabaseHas('periods', ['uuid' => $this->periodModel->uuid]);
+
+        $output = $this->repository->delete($this->periodModel->uuid);
+
+        expect($output)->toBeTrue();
+        $this->assertDatabaseMissing('periods', ['uuid' => $this->periodModel->uuid]);
+    });
+
+    it('should return false if period deletion failed', function () {
+        $output = $this->repository->delete('invalid_uuid');
+        expect($output)->toBeFalse();
+    });
+
+    it('should throw exception on period deletion error', function () {
+        expect(function () {
+            PeriodModel::deleting(throw new \Exception('Error deleting period.'));
+            $this->repository->delete($this->periodModel->uuid);
+        })->toThrow(new \Exception('Error deleting period.'));
+    });
+});
