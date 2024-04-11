@@ -3,8 +3,10 @@
 namespace Modules\Admin\Repository;
 
 use App\Models\Period as PeriodModel;
+use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Period;
 use Modules\Admin\Gateway\PeriodGateway;
+use Modules\Shared\Domain\ValueObject\UUID;
 
 class PeriodRepository implements PeriodGateway
 {
@@ -22,7 +24,14 @@ class PeriodRepository implements PeriodGateway
 
     public function find(string $id): ?Period
     {
-        return null;
+        $periodModel = PeriodModel::where('uuid', $id)->first();
+
+        return $periodModel ? new Period(
+            id: new UUID($periodModel->uuid),
+            time: $periodModel->time,
+            createdAt: new Carbon($periodModel->created_at),
+            updatedAt: new Carbon($periodModel->updated_at),
+        ) : null;
     }
 
     public function list(): array
