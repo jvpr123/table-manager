@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class CreatePeriodInputDTO
 {
-    public function __construct(public Carbon $time)
+    public function __construct(public string $time)
     {
     }
 }

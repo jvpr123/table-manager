@@ -22,7 +22,7 @@ class UpdatePeriodUseCase
             throw new EntityNotFoundException('Period', $input->id);
         }
 
-        $period->setTime(Carbon::createFromFormat('H:i', $input->time));
+        $period->setTime($input->time);
         $period->setUpdatedAt(now());
 
         $this->periodRepository->update($period);

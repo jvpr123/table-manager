@@ -18,7 +18,7 @@ class Period extends BaseEntity
     private array $meetingsIds = [];
 
     public function __construct(
-        Carbon $time,
+        string $time,
         ?UUID $id = null,
         ?Carbon $createdAt = null,
         ?Carbon $updatedAt = null
@@ -32,9 +32,9 @@ class Period extends BaseEntity
         return $this->time;
     }
 
-    public function setTime(Carbon $time): void
+    public function setTime(string $time): void
     {
-        $this->time = $time->format('H:i');
+        $this->time = $time;
     }
 
     /**
