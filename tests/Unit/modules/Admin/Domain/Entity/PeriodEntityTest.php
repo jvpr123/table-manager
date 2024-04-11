@@ -11,7 +11,7 @@ use Modules\Shared\Exceptions\EntityAlreadyRelatedException;
 describe('Period Entity unit tests', function () {
     beforeEach(function () {
         $this->time = Carbon::createFromFormat('H:i', '08:30');
-        $this->period = new Period($this->time);
+        $this->period = new Period($this->time->format('H:i'));
 
         $this->meetingA = new Meeting(now());
         $this->meetingB = new Meeting(now()->addHour());
@@ -28,9 +28,9 @@ describe('Period Entity unit tests', function () {
     });
 
     it('should update period time successfully', function () {
-        $time = Carbon::createFromFormat('H:i', '08:45');
+        $time = Carbon::createFromFormat('H:i', '08:45')->format('H:i');
         $this->period->setTime($time);
-        expect($this->period->getTime())->toBe($time->format('H:i'));
+        expect($this->period->getTime())->toBe($time);
     });
 
     it('should retrieve meetings ids related to period successfully', function () {

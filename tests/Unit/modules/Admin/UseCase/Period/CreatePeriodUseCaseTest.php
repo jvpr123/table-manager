@@ -13,7 +13,7 @@ describe('CreatePeriodUseCase unit tests', function () {
     beforeEach(function () {
         $this->mockPeriodRepository = \Mockery::mock(PeriodGateway::class);
         $this->useCase = new CreatePeriodUseCase($this->mockPeriodRepository);
-        $this->input = new CreatePeriodInputDTO(Carbon::createFromFormat('H:i', '8:30'));
+        $this->input = new CreatePeriodInputDTO(Carbon::createFromFormat('H:i', '8:30')->format('H:i'));
     });
 
     it('should create a period successfully', function () {
@@ -26,7 +26,7 @@ describe('CreatePeriodUseCase unit tests', function () {
 
         expect($output)->toBeInstanceOf(PeriodOutputDTO::class);
         expect($output->id)->toBeString();
-        expect($output->time)->toBe($this->input->time->format('H:i'));
+        expect($output->time)->toBe($this->input->time);
         expect($output->createdAt->toString())->toBe(now()->toString());
         expect($output->updatedAt->toString())->toBe(now()->toString());
     });

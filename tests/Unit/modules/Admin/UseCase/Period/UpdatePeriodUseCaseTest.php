@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Modules\Admin\UseCase\Period;
 
-use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Period;
 use Modules\Admin\DTO\Period\PeriodOutputDTO;
 use Modules\Admin\DTO\Period\UpdatePeriodInputDTO;
@@ -16,7 +15,7 @@ describe('UpdatePeriodUseCase unit tests', function () {
         $this->useCase = new UpdatePeriodUseCase($this->mockPeriodRepository);
 
         $this->time = now();
-        $this->period = new Period($this->time);
+        $this->period = new Period($this->time->format('H:i'));
         $this->input = new UpdatePeriodInputDTO(
             id: $this->period->getId()->value,
             time: $this->time->addHour()->format('H:i'),
