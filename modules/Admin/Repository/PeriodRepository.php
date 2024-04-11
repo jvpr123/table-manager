@@ -22,6 +22,17 @@ class PeriodRepository implements PeriodGateway
         $periodModel->saveOrFail();
     }
 
+    public function update(Period $period): bool
+    {
+        $id = $period->getId()->value;
+        $result = PeriodModel::where('uuid', $id)->update([
+            'time' => $period->getTime(),
+            'updated_at' => $period->getUpdatedAt(),
+        ]);
+
+        return (bool) $result;
+    }
+
     public function find(string $id): ?Period
     {
         $periodModel = PeriodModel::where('uuid', $id)->first();
@@ -47,11 +58,6 @@ class PeriodRepository implements PeriodGateway
             createdAt: new Carbon($pm->created_at),
             updatedAt: new Carbon($pm->updated_at),
         ))->toArray();
-    }
-
-    public function update(Period $period): bool
-    {
-        return false;
     }
 
     public function delete(string $id): bool
