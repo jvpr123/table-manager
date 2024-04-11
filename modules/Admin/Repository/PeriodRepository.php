@@ -34,9 +34,19 @@ class PeriodRepository implements PeriodGateway
         ) : null;
     }
 
+    /**
+     * @return Period[]
+     */
     public function list(): array
     {
-        return [];
+        $peridosModels = PeriodModel::all();
+
+        return $peridosModels->map(fn (PeriodModel $pm) => new Period(
+            id: new UUID($pm->uuid),
+            time: $pm->time,
+            createdAt: new Carbon($pm->created_at),
+            updatedAt: new Carbon($pm->updated_at),
+        ))->toArray();
     }
 
     public function update(Period $period): bool
