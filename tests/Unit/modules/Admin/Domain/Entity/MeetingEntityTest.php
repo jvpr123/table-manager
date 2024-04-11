@@ -11,12 +11,12 @@ use Modules\Shared\Domain\ValueObject\UUID;
 describe('Meeting Entity unit tests', function () {
     beforeEach(function () {
         $this->meeting = new Meeting(
-            date: $this->date = now(),
+            date: $this->date = now()->format('Y-m-d'),
             description: $this->description = 'meeting_description'
         );
 
         $this->responsible = new Responsible(name: 'responsible_name');
-        $this->period = new Period(time: now());
+        $this->period = new Period(time: now()->format('H:i'));
         $this->local = new Local(title: 'local_title', description: 'local_description');
     });
 
@@ -34,12 +34,12 @@ describe('Meeting Entity unit tests', function () {
     });
 
     it('should retrieve meeting date successfully', function () {
-        expect($this->meeting->getDate())->toBe($this->date->format('H:i'));
+        expect($this->meeting->getDate())->toBe($this->date);
     });
 
     it('should update meeting date successfully', function () {
-        $this->meeting->setDate($date = now()->addHour());
-        expect($this->meeting->getDate())->toBe($date->format('H:i'));
+        $this->meeting->setDate($date = now()->addDay()->format('Y-m-d'));
+        expect($this->meeting->getDate())->toBe($date);
     });
 
     it('should retrieve meeting description successfully', function () {

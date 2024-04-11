@@ -20,7 +20,7 @@ class Meeting extends BaseEntity
     private ?Local $local = null;
 
     public function __construct(
-        Carbon $date,
+        string $date,
         ?string $description = null,
         ?UUID $id = null,
         ?Carbon $createdAt = null,
@@ -37,9 +37,9 @@ class Meeting extends BaseEntity
         return $this->date;
     }
 
-    public function setDate(Carbon $date): void
+    public function setDate(string $date): void
     {
-        $this->date = $date->format('H:i');
+        $this->date = $date;
     }
 
     public function getDescription(): ?string
