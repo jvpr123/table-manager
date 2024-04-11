@@ -34,6 +34,47 @@ describe('PeriodRepository create() unit tests', function () {
     });
 });
 
+describe('PeriodRepository update() unit tests', function () {
+    beforeEach(function () {
+        $this->periodEntity = new Period(time: '8:00');
+        $this->repository = new PeriodRepository();
+    });
+
+    it('should return true if period update succeeded', function () {
+        $this->periodModel = PeriodModel::factory()->create([
+            'uuid' => $this->periodEntity->getId()->value,
+            'time' => $this->periodEntity->getTime(),
+            'created_at' => $this->periodEntity->getCreatedAt(),
+            'updated_at' => $this->periodEntity->getUpdatedAt(),
+        ]);
+
+        $this->periodEntity->setTime($time = '9:00');
+        $this->periodEntity->setUpdatedAt($date = now()->addDay());
+
+        $output = $this->repository->update($this->periodEntity);
+
+        expect($output)->toBeTrue();
+        $this->assertDatabaseHas('periods', [
+            'uuid' => $this->periodModel->uuid,
+            'time' => $time,
+            'updated_at' => $date->format('Y-m-d H:i:s'),
+            'created_at' => $this->periodModel->created_at,
+        ]);
+    });
+
+    it('should return false if period deletion failed', function () {
+        $output = $this->repository->update($this->periodEntity);
+        expect($output)->toBeFalse();
+    });
+
+    it('should throw exception on period update error', function () {
+        expect(function () {
+            PeriodModel::updating(throw new \Exception('Error updating period.'));
+            $this->repository->update($this->periodEntity);
+        })->toThrow(new \Exception('Error updating period.'));
+    });
+});
+
 describe('PeriodRepository find() unit tests', function () {
     beforeEach(function () {
         $this->periodEntity = new Period(time: $this->time = now());

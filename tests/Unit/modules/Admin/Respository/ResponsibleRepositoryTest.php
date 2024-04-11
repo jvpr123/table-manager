@@ -6,7 +6,7 @@ use App\Models\Responsible as ResponsibleModel;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Repository\ResponsibleRepository;
 
-describe('ResponsibleRepository create unit tests', function () {
+describe('ResponsibleRepository create() unit tests', function () {
     beforeEach(function () {
         $this->responsible = new Responsible('responsible_name');
         $this->repository = new ResponsibleRepository();
@@ -34,7 +34,7 @@ describe('ResponsibleRepository create unit tests', function () {
     });
 });
 
-describe('ResponsibleRepository update unit tests', function () {
+describe('ResponsibleRepository update() unit tests', function () {
     beforeEach(function () {
         $this->responsibleEntity = new Responsible('responsible_name');
         $this->repository = new ResponsibleRepository();
@@ -75,7 +75,7 @@ describe('ResponsibleRepository update unit tests', function () {
     });
 });
 
-describe('ResponsibleRepository find unit tests', function () {
+describe('ResponsibleRepository find() unit tests', function () {
     beforeEach(function () {
         $this->responsibleEntity = new Responsible('responsible_name');
         $this->responsibleId = $this->responsibleEntity->getId()->value;
@@ -100,7 +100,7 @@ describe('ResponsibleRepository find unit tests', function () {
     });
 });
 
-describe('ResponsibleRepository list unit tests', function () {
+describe('ResponsibleRepository list() unit tests', function () {
     beforeEach(fn () => $this->repository = new ResponsibleRepository());
 
     it('should retrieve all responsibles from database successfully', function () {
@@ -127,7 +127,7 @@ describe('ResponsibleRepository list unit tests', function () {
     });
 });
 
-describe('ResponsibleRepository delete unit tests', function () {
+describe('ResponsibleRepository delete() unit tests', function () {
     beforeEach(function () {
         $this->responsibleModel = ResponsibleModel::factory()->create(['uuid' => uuid_create()]);
         $this->repository = new ResponsibleRepository();
