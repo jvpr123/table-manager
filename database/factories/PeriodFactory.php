@@ -18,6 +18,7 @@ class PeriodFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => uuid_create(),
             'time' => now()->format('H:i')
         ];
     }
