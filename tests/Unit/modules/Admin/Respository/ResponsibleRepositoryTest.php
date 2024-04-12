@@ -5,11 +5,14 @@ namespace Tests\Unit\Modules\Admin\Repository;
 use App\Models\Responsible as ResponsibleModel;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Repository\ResponsibleRepository;
+use Modules\Admin\Transformer\ResponsibleTransformer;
 
 describe('ResponsibleRepository create() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(ResponsibleTransformer::class);
+        $this->repository = new ResponsibleRepository($this->transformer);
+
         $this->responsible = new Responsible('responsible_name');
-        $this->repository = new ResponsibleRepository();
     });
 
     it('should register a responsible in database successfully', function () {
@@ -36,8 +39,10 @@ describe('ResponsibleRepository create() unit tests', function () {
 
 describe('ResponsibleRepository update() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(ResponsibleTransformer::class);
+        $this->repository = new ResponsibleRepository($this->transformer);
+
         $this->responsibleEntity = new Responsible('responsible_name');
-        $this->repository = new ResponsibleRepository();
     });
 
     it('should return true if responsible update succeeded', function () {
@@ -86,10 +91,16 @@ describe('ResponsibleRepository find() unit tests', function () {
             'updated_at' => $this->responsibleEntity->getUpdatedAt(),
         ]);
 
-        $this->repository = new ResponsibleRepository();
+        $this->transformer = \Mockery::mock(ResponsibleTransformer::class);
+        $this->repository = new ResponsibleRepository($this->transformer);
     });
 
     it('should retrieve a responsible from database successfully', function () {
+        $this->transformer->expects()
+            ->transform(\Mockery::type(ResponsibleModel::class))
+            ->andReturn($this->responsibleEntity)
+            ->once();
+
         $output = $this->repository->find($this->responsibleId);
         expect($output)->toBeInstanceOf(Responsible::class);
         expect($output->getId()->value)->toBe($this->responsibleId);
@@ -101,7 +112,10 @@ describe('ResponsibleRepository find() unit tests', function () {
 });
 
 describe('ResponsibleRepository list() unit tests', function () {
-    beforeEach(fn () => $this->repository = new ResponsibleRepository());
+    beforeEach(function () {
+        $this->transformer = \Mockery::mock(ResponsibleTransformer::class);
+        $this->repository = new ResponsibleRepository($this->transformer);
+    });
 
     it('should retrieve all responsibles from database successfully', function () {
         $responsibleEntities = [
@@ -116,6 +130,11 @@ describe('ResponsibleRepository list() unit tests', function () {
                 'created_at' => $re->getCreatedAt(),
                 'updated_at' => $re->getUpdatedAt(),
             ]);
+
+            $this->transformer->expects()
+                ->transform(\Mockery::type(ResponsibleModel::class))
+                ->andReturn($re)
+                ->once();
         }
 
         $output = $this->repository->list();
@@ -129,8 +148,10 @@ describe('ResponsibleRepository list() unit tests', function () {
 
 describe('ResponsibleRepository delete() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(ResponsibleTransformer::class);
+        $this->repository = new ResponsibleRepository($this->transformer);
+
         $this->responsibleModel = ResponsibleModel::factory()->create(['uuid' => uuid_create()]);
-        $this->repository = new ResponsibleRepository();
     });
 
     it('should return true if responsible deletion succeeded', function () {
