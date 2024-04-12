@@ -5,11 +5,14 @@ namespace Tests\Unit\Modules\Admin\Repository;
 use App\Models\Period as PeriodModel;
 use Modules\Admin\Domain\Entity\Period;
 use Modules\Admin\Repository\PeriodRepository;
+use Modules\Admin\Transformer\PeriodTransformer;
 
 describe('PeriodRepository create() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(PeriodTransformer::class);
+        $this->repository = new PeriodRepository($this->transformer);
+
         $this->period = new Period(time: $this->time = now()->format('H:i'));
-        $this->repository = new PeriodRepository();
     });
 
     it('should register a period in database successfully', function () {
@@ -36,8 +39,10 @@ describe('PeriodRepository create() unit tests', function () {
 
 describe('PeriodRepository update() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(PeriodTransformer::class);
+        $this->repository = new PeriodRepository($this->transformer);
+
         $this->periodEntity = new Period(time: '8:00');
-        $this->repository = new PeriodRepository();
     });
 
     it('should return true if period update succeeded', function () {
@@ -77,6 +82,9 @@ describe('PeriodRepository update() unit tests', function () {
 
 describe('PeriodRepository find() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(PeriodTransformer::class);
+        $this->repository = new PeriodRepository($this->transformer);
+
         $this->periodEntity = new Period(time: $this->time = now());
         $this->periodId = $this->periodEntity->getId()->value;
         $this->periodModel = PeriodModel::factory()->create([
@@ -85,11 +93,14 @@ describe('PeriodRepository find() unit tests', function () {
             'created_at' => $this->periodEntity->getCreatedAt(),
             'updated_at' => $this->periodEntity->getUpdatedAt(),
         ]);
-
-        $this->repository = new PeriodRepository();
     });
 
     it('should retrieve a period from database successfully', function () {
+        $this->transformer->expects()
+            ->transform(\Mockery::type(PeriodModel::class))
+            ->andReturn($this->periodEntity)
+            ->once();
+
         $output = $this->repository->find($this->periodId);
         expect($output)->toBeInstanceOf(Period::class);
         expect($output->getId()->value)->toBe($this->periodId);
@@ -101,7 +112,10 @@ describe('PeriodRepository find() unit tests', function () {
 });
 
 describe('PeriodRepository list() unit tests', function () {
-    beforeEach(fn () => $this->repository = new PeriodRepository());
+    beforeEach(function () {
+        $this->transformer = \Mockery::mock(PeriodTransformer::class);
+        $this->repository = new PeriodRepository($this->transformer);
+    });
 
     it('should retrieve all periods from database successfully', function () {
         $periodEntities = [
@@ -116,6 +130,11 @@ describe('PeriodRepository list() unit tests', function () {
                 'created_at' => $pe->getCreatedAt(),
                 'updated_at' => $pe->getUpdatedAt(),
             ]);
+
+            $this->transformer->expects()
+                ->transform(\Mockery::type(PeriodModel::class))
+                ->andReturn($pe)
+                ->once();
         }
 
         $output = $this->repository->list();
@@ -129,8 +148,10 @@ describe('PeriodRepository list() unit tests', function () {
 
 describe('PeriodRepository delete() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(PeriodTransformer::class);
+        $this->repository = new PeriodRepository($this->transformer);
+
         $this->periodModel = PeriodModel::factory()->create(['uuid' => uuid_create()]);
-        $this->repository = new PeriodRepository();
     });
 
     it('should return true if period deletion succeeded', function () {

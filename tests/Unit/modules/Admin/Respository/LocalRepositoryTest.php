@@ -5,15 +5,17 @@ namespace Tests\Unit\Modules\Admin\Repository;
 use App\Models\Local as LocalModel;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Admin\Repository\LocalRepository;
+use Modules\Admin\Transformer\LocalTransformer;
 
 describe('LocalRepository create() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(LocalTransformer::class);
+        $this->repository = new LocalRepository($this->transformer);
+
         $this->local = new Local(
             title: 'local_title',
             description: 'local_description',
         );
-
-        $this->repository = new LocalRepository();
     });
 
     it('should register a local in database successfully', function () {
@@ -41,12 +43,13 @@ describe('LocalRepository create() unit tests', function () {
 
 describe('LocalRepository update() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(LocalTransformer::class);
+        $this->repository = new LocalRepository($this->transformer);
+
         $this->localEntity = new Local(
             title: 'local_title',
             description: 'local_description',
         );
-
-        $this->repository = new LocalRepository();
     });
 
     it('should return true if local update succeeded', function () {
@@ -89,6 +92,9 @@ describe('LocalRepository update() unit tests', function () {
 
 describe('LocalRepository find() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(LocalTransformer::class);
+        $this->repository = new LocalRepository($this->transformer);
+
         $this->localEntity = new Local(title: $this->title = 'local_title');
         $this->localId = $this->localEntity->getId()->value;
         $this->localModel = LocalModel::factory()->create([
@@ -98,11 +104,14 @@ describe('LocalRepository find() unit tests', function () {
             'created_at' => $this->localEntity->getCreatedAt(),
             'updated_at' => $this->localEntity->getUpdatedAt(),
         ]);
-
-        $this->repository = new LocalRepository();
     });
 
     it('should retrieve a local from database successfully', function () {
+        $this->transformer->expects()
+            ->transform(\Mockery::type(LocalModel::class))
+            ->andReturn($this->localEntity)
+            ->once();
+
         $output = $this->repository->find($this->localId);
         expect($output)->toBeInstanceOf(Local::class);
         expect($output->getId()->value)->toBe($this->localId);
@@ -114,7 +123,10 @@ describe('LocalRepository find() unit tests', function () {
 });
 
 describe('LocalRepository list() unit tests', function () {
-    beforeEach(fn () => $this->repository = new LocalRepository());
+    beforeEach(function () {
+        $this->transformer = \Mockery::mock(LocalTransformer::class);
+        $this->repository = new LocalRepository($this->transformer);
+    });
 
     it('should retrieve all locals from database successfully', function () {
         $localEntities = [
@@ -122,14 +134,18 @@ describe('LocalRepository list() unit tests', function () {
             new Local(title: 'local_title_b'),
         ];
 
-        foreach ($localEntities as $pe) {
+        foreach ($localEntities as $le) {
             LocalModel::factory()->create([
-                'uuid' => $pe->getId()->value,
-                'title' => $pe->getTitle(),
-                'description' => $pe->getDescription(),
-                'created_at' => $pe->getCreatedAt(),
-                'updated_at' => $pe->getUpdatedAt(),
+                'uuid' => $le->getId()->value,
+                'title' => $le->getTitle(),
+                'description' => $le->getDescription(),
+                'created_at' => $le->getCreatedAt(),
+                'updated_at' => $le->getUpdatedAt(),
             ]);
+            $this->transformer->expects()
+                ->transform(\Mockery::type(LocalModel::class))
+                ->andReturn($le)
+                ->once();
         }
 
         $output = $this->repository->list();
@@ -143,8 +159,10 @@ describe('LocalRepository list() unit tests', function () {
 
 describe('LocalRepository delete() unit tests', function () {
     beforeEach(function () {
+        $this->transformer = \Mockery::mock(LocalTransformer::class);
+        $this->repository = new LocalRepository($this->transformer);
+
         $this->localModel = LocalModel::factory()->create(['uuid' => uuid_create()]);
-        $this->repository = new LocalRepository();
     });
 
     it('should return true if local deletion succeeded', function () {
