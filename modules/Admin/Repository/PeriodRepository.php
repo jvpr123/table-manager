@@ -3,13 +3,16 @@
 namespace Modules\Admin\Repository;
 
 use App\Models\Period as PeriodModel;
-use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Period;
 use Modules\Admin\Gateway\PeriodGateway;
-use Modules\Shared\Domain\ValueObject\UUID;
+use Modules\Admin\Transformer\PeriodTransformer;
 
 class PeriodRepository implements PeriodGateway
 {
+    public function __construct(private PeriodTransformer $transformer)
+    {
+    }
+
     public function create(Period $period): void
     {
         $periodModel = new PeriodModel([
@@ -37,12 +40,9 @@ class PeriodRepository implements PeriodGateway
     {
         $periodModel = PeriodModel::where('uuid', $id)->first();
 
-        return $periodModel ? new Period(
-            id: new UUID($periodModel->uuid),
-            time: $periodModel->time,
-            createdAt: new Carbon($periodModel->created_at),
-            updatedAt: new Carbon($periodModel->updated_at),
-        ) : null;
+        return $periodModel
+            ? $this->transformer->transform($periodModel)
+            : null;
     }
 
     /**
@@ -52,12 +52,9 @@ class PeriodRepository implements PeriodGateway
     {
         $peridosModels = PeriodModel::all();
 
-        return $peridosModels->map(fn (PeriodModel $pm) => new Period(
-            id: new UUID($pm->uuid),
-            time: $pm->time,
-            createdAt: new Carbon($pm->created_at),
-            updatedAt: new Carbon($pm->updated_at),
-        ))->toArray();
+        return $peridosModels
+            ->map(fn (PeriodModel $pm) => $this->transformer->transform($pm))
+            ->toArray();
     }
 
     public function delete(string $id): bool

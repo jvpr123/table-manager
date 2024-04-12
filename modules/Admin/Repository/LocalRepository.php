@@ -6,10 +6,15 @@ use App\Models\Local as LocalModel;
 use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Admin\Gateway\LocalGateway;
+use Modules\Admin\Transformer\LocalTransformer;
 use Modules\Shared\Domain\ValueObject\UUID;
 
 class LocalRepository implements LocalGateway
 {
+    public function __construct(private LocalTransformer $transformer)
+    {
+    }
+
     public function create(Local $local): void
     {
         $localModel = new LocalModel([
@@ -39,13 +44,9 @@ class LocalRepository implements LocalGateway
     {
         $localModel = LocalModel::where('uuid', $id)->first();
 
-        return $localModel ? new Local(
-            id: new UUID($localModel->uuid),
-            title: $localModel->title,
-            description: $localModel->description,
-            createdAt: new Carbon($localModel->created_at),
-            updatedAt: new Carbon($localModel->updated_at),
-        ) : null;
+        return $localModel
+            ? $this->transformer->transform($localModel)
+            : null;
     }
 
     /**
@@ -55,13 +56,9 @@ class LocalRepository implements LocalGateway
     {
         $peridosModels = LocalModel::all();
 
-        return $peridosModels->map(fn (LocalModel $lm) => new Local(
-            id: new UUID($lm->uuid),
-            title: $lm->title,
-            description: $lm->description,
-            createdAt: new Carbon($lm->created_at),
-            updatedAt: new Carbon($lm->updated_at),
-        ))->toArray();
+        return $peridosModels
+            ->map(fn (LocalModel $lm) => $this->transformer->transform($lm))
+            ->toArray();
     }
 
     public function delete(string $id): bool
