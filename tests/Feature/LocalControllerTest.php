@@ -13,7 +13,8 @@ describe('LocalController::store()', function () {
         $bodyData = Local::factory()->make()->toArray();
 
         $response = $this->postJson($this->route, $bodyData);
-        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertCreated();
+        $response->assertSee('Local created successfully.');
         $response->assertJson(fn (AssertableJson $json) => $json->hasAll(['message', 'local']));
     });
 
@@ -25,16 +26,39 @@ describe('LocalController::store()', function () {
 
         $response = $this->postJson($this->route, $bodyData);
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertSee('Validation error.');
         $response->assertJson(fn (AssertableJson $json) => $json->hasAll(['message', 'errors']));
     });
 
     it('should return 500 HTTP status-code in case of generic error', function () {
-        Local::saving(fn () => throw new \Exception());
+        Local::saving(fn () => throw new \Exception('Database error.'));
 
         $bodyData = Local::factory()->make()->toArray();
 
         $response = $this->postJson($this->route, $bodyData);
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->assertJson(fn (AssertableJson $json) => $json->hasAll(['message']));
+        $response->assertInternalServerError();
+        $response->assertSee('Database error.');
+    });
+});
+
+describe('LocalController::show()', function () {
+    it('should return 200 HTTP status-code with found local', function () {
+        $local = Local::factory()->create();
+        $route = route('get-local', ['localId' => $local->uuid]);
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Local found successfully.');
+        expect($responseData['local']->id)->toBe($local->uuid);
+    });
+
+    it('should return 404 HTTP status-code if local not found', function () {
+        $route = route('get-local', ['localId' => $id = uuid_create()]);
+
+        $response = $this->getJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Local not found using ID $id provided.");
     });
 });
