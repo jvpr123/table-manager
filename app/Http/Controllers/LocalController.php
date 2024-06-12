@@ -6,6 +6,7 @@ use App\Http\Requests\Local\CreateLocalRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Local\CreateLocalInputDTO;
 use Modules\Admin\UseCase\Local\CreateLocalUseCase;
+use Modules\Admin\UseCase\Local\FindLocalByIdUseCase;
 
 class LocalController extends Controller
 {
@@ -24,5 +25,15 @@ class LocalController extends Controller
             'message' => 'Local created successfully.',
             'local' => $local,
         ], Response::HTTP_CREATED);
+    }
+
+    public function show(FindLocalByIdUseCase $useCase, string $localId)
+    {
+        $local = $useCase->execute($localId);
+
+        return response()->json([
+            'message' => 'Local found successfully.',
+            'local' => $local,
+        ]);
     }
 }
