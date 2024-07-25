@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Modules\Admin\DTO\Local\CreateLocalInputDTO;
 use Modules\Admin\UseCase\Local\CreateLocalUseCase;
 use Modules\Admin\UseCase\Local\FindLocalByIdUseCase;
+use Modules\Admin\UseCase\Local\ListLocalsUseCase;
 
 class LocalController extends Controller
 {
@@ -34,6 +35,16 @@ class LocalController extends Controller
         return response()->json([
             'message' => 'Local found successfully.',
             'local' => $local,
+        ]);
+    }
+
+    public function index(ListLocalsUseCase $useCase)
+    {
+        $locals = $useCase->execute();
+
+        return response()->json([
+            'message' => 'Locals found successfully.',
+            'locals' => $locals,
         ]);
     }
 }

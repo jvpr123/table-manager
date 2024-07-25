@@ -3,11 +3,9 @@
 namespace Modules\Admin\Repository;
 
 use App\Models\Local as LocalModel;
-use Carbon\Carbon;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Admin\Gateway\LocalGateway;
 use Modules\Admin\Transformer\LocalTransformer;
-use Modules\Shared\Domain\ValueObject\UUID;
 
 class LocalRepository implements LocalGateway
 {
