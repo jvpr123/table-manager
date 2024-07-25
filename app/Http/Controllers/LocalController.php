@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Modules\Admin\DTO\Local\CreateLocalInputDTO;
 use Modules\Admin\DTO\Local\UpdateLocalInputDTO;
 use Modules\Admin\UseCase\Local\CreateLocalUseCase;
+use Modules\Admin\UseCase\Local\DeleteLocalUseCase;
 use Modules\Admin\UseCase\Local\FindLocalByIdUseCase;
 use Modules\Admin\UseCase\Local\ListLocalsUseCase;
 use Modules\Admin\UseCase\Local\UpdateLocalUseCase;
@@ -67,6 +68,14 @@ class LocalController extends Controller
         return response()->json([
             'message' => 'Local updated successfully.',
             'local' => $updatedLocal,
+        ]);
+    }
+
+    public function delete(DeleteLocalUseCase $useCase, string $localId)
+    {
+        $useCase->execute($localId);
+        return response()->json([
+            'message' => 'Local deleted successfully.',
         ]);
     }
 }

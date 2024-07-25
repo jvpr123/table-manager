@@ -8,4 +8,5 @@ Route::controller(LocalController::class)->group(function () {
     Route::get('/', 'index')->name('get-locals');
     Route::get('/{localId}', 'show')->name('get-local');
     Route::put('/{localId}', 'update')->name('update-local');
+    Route::delete('/{localId}', 'delete')->name('delete-local');
 })->prefix('local');
