@@ -19,4 +19,5 @@ Route::controller(ResponsibleController::class)
     ->group(function () {
         Route::post('/', 'store')->name('store-responsible');
         Route::get('/', 'index')->name('get-responsibles');
+        Route::get('/{responsibleId}', 'show')->name('get-responsible');
     });

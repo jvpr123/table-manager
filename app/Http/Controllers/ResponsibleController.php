@@ -6,6 +6,7 @@ use App\Http\Requests\Responsible\CreateResponsibleRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\UseCase\Responsible\CreateResponsibleUseCase;
+use Modules\Admin\UseCase\Responsible\FindResponsibleByIdUseCase;
 use Modules\Admin\UseCase\Responsible\ListResponsiblesUseCase;
 
 class ResponsibleController extends Controller
@@ -33,6 +34,18 @@ class ResponsibleController extends Controller
         return response()->json([
             'message' => 'Responsibles found successfully.',
             'responsibles' => $responsibles,
+        ], Response::HTTP_OK);
+    }
+
+    public function show(
+        FindResponsibleByIdUseCase $useCase,
+        string $responsibleId
+    ) {
+        $responsible = $useCase->execute($responsibleId);
+
+        return response()->json([
+            'message' => 'Responsible found successfully.',
+            'responsible' => $responsible,
         ], Response::HTTP_OK);
     }
 }
