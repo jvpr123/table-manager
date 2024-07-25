@@ -36,3 +36,27 @@ describe('ResponsibleController::store()', function () {
         $response->assertSee('Database error.');
     });
 });
+
+describe('ResponsibleController::index()', function () {
+    it('should return 200 HTTP status-code with found locals', function () {
+        $responsibles = Responsible::factory()->count(5)->create();
+        $route = route('get-responsibles');
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Responsibles found successfully.');
+        expect($responseData['responsibles'])->toHaveCount($responsibles->count());
+    });
+
+    it('should return 200 HTTP status-code with empty array if no responsible found', function () {
+        $route = route('get-responsibles');
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Responsibles found successfully.');
+        expect($responseData['responsibles'])->toBeEmpty();
+    });
+});
