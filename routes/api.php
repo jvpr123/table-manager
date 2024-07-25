@@ -20,4 +20,5 @@ Route::controller(ResponsibleController::class)
         Route::post('/', 'store')->name('store-responsible');
         Route::get('/', 'index')->name('get-responsibles');
         Route::get('/{responsibleId}', 'show')->name('get-responsible');
+        Route::put('/{responsibleId}', 'update')->name('update-responsible');
     });

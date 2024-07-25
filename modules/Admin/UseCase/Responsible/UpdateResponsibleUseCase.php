@@ -21,7 +21,7 @@ class UpdateResponsibleUseCase
             throw new EntityNotFoundException('Responsible', $input->id);
         }
 
-        $responsible->setName($input->name);
+        $responsible->setName($input->name ?: $responsible->getName());
         $responsible->setUpdatedAt(now());
 
         $this->responsibleRepository->update($responsible);

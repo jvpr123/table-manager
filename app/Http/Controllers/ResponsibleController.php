@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Responsible\CreateResponsibleRequest;
+use App\Http\Requests\Responsible\UpdateResponsibleRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
+use Modules\Admin\DTO\Responsible\UpdateResponsibleInputDTO;
 use Modules\Admin\UseCase\Responsible\CreateResponsibleUseCase;
 use Modules\Admin\UseCase\Responsible\FindResponsibleByIdUseCase;
 use Modules\Admin\UseCase\Responsible\ListResponsiblesUseCase;
+use Modules\Admin\UseCase\Responsible\UpdateResponsibleUseCase;
 
 class ResponsibleController extends Controller
 {
@@ -47,5 +50,23 @@ class ResponsibleController extends Controller
             'message' => 'Responsible found successfully.',
             'responsible' => $responsible,
         ], Response::HTTP_OK);
+    }
+
+    public function update(
+        UpdateResponsibleUseCase $useCase,
+        CreateResponsibleRequest $request,
+        string $responsibleId
+    ) {
+        $input = new UpdateResponsibleInputDTO(
+            id: $responsibleId,
+            name: $request->validated('name'),
+        );
+
+        $updatedResponsible = $useCase->execute($input);
+
+        return response()->json([
+            'message' => 'Responsible updated successfully.',
+            'responsible' => $updatedResponsible,
+        ]);
     }
 }
