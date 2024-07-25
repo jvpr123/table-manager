@@ -62,3 +62,27 @@ describe('LocalController::show()', function () {
         $response->assertSee("Local not found using ID $id provided.");
     });
 });
+
+describe('LocalController::index()', function () {
+    it('should return 200 HTTP status-code with found locals', function () {
+        $locals = Local::factory()->count(5)->create();
+        $route = route('get-locals');
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Locals found successfully.');
+        expect($responseData['locals'])->toHaveCount($locals->count());
+    });
+
+    it('should return 200 HTTP status-code with empty array if no local found', function () {
+        $route = route('get-locals');
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Locals found successfully.');
+        expect($responseData['locals'])->toBeEmpty();
+    });
+});
