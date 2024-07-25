@@ -82,3 +82,42 @@ describe('ResponsibleController::show()', function () {
         $response->assertSee("Responsible not found using ID $id provided.");
     });
 });
+
+describe('ResponsibleController::update()', function () {
+    beforeEach(function () {
+        $this->responsible = Responsible::factory()->create();
+        $this->route = route('update-responsible', [
+            'responsibleId' => $this->responsible->uuid
+        ]);
+    });
+
+    it('should return 200 HTTP status-code with updated responsible', function () {
+        $bodyData = Responsible::factory()->make()->toArray();
+
+        $response = $this->putJson($this->route, $bodyData);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Responsible updated successfully.');
+        expect($responseData['responsible']->id)->toBe($this->responsible->uuid);
+        expect($responseData['responsible']->name)->toBe($bodyData['name']);
+    });
+
+    it('should return 400 HTTP status-code with validation errors', function () {
+        $bodyData = [];
+
+        $response = $this->putJson($this->route, $bodyData);
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertSee('Validation error.');
+        $response->assertJson(fn (AssertableJson $json) => $json->hasAll(['message', 'errors']));
+    });
+
+    it('should return 404 HTTP status-code if responsible not found', function () {
+        $route = route('update-responsible', $id = uuid_create());
+        $bodyData = Responsible::factory()->make()->toArray();
+
+        $response = $this->putJson($route, $bodyData);
+        $response->assertNotFound();
+        $response->assertSee("Responsible not found using ID $id provided.");
+    });
+});
