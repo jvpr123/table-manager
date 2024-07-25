@@ -7,4 +7,5 @@ Route::controller(LocalController::class)->group(function () {
     Route::post('/', 'store')->name('store-local');
     Route::get('/', 'index')->name('get-locals');
     Route::get('/{localId}', 'show')->name('get-local');
+    Route::put('/{localId}', 'update')->name('update-local');
 })->prefix('local');

@@ -21,8 +21,8 @@ class UpdateLocalUseCase
             throw new EntityNotFoundException('Local', $input->id);
         }
 
-        $local->setTitle($input->title);
-        $local->setDescription($input->description);
+        $local->setTitle($input->title ?: $local->getTitle());
+        $local->setDescription($input->description ?: $local->getDescription());
         $local->setUpdatedAt(now());
 
         $this->localRepository->update($local);

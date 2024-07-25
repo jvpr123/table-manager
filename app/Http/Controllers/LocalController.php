@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Local\CreateLocalRequest;
+use App\Http\Requests\Local\UpdateLocalRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Local\CreateLocalInputDTO;
+use Modules\Admin\DTO\Local\UpdateLocalInputDTO;
 use Modules\Admin\UseCase\Local\CreateLocalUseCase;
 use Modules\Admin\UseCase\Local\FindLocalByIdUseCase;
 use Modules\Admin\UseCase\Local\ListLocalsUseCase;
+use Modules\Admin\UseCase\Local\UpdateLocalUseCase;
 
 class LocalController extends Controller
 {
@@ -45,6 +48,25 @@ class LocalController extends Controller
         return response()->json([
             'message' => 'Locals found successfully.',
             'locals' => $locals,
+        ]);
+    }
+
+    public function update(
+        UpdateLocalUseCase $useCase,
+        UpdateLocalRequest $request,
+        string $localId
+    ) {
+        $dto = new UpdateLocalInputDTO(
+            id: $localId,
+            title: $request->validated('title'),
+            description: $request->validated('description'),
+        );
+
+        $updatedLocal = $useCase->execute($dto);
+
+        return response()->json([
+            'message' => 'Local updated successfully.',
+            'local' => $updatedLocal,
         ]);
     }
 }
