@@ -121,3 +121,24 @@ describe('ResponsibleController::update()', function () {
         $response->assertSee("Responsible not found using ID $id provided.");
     });
 });
+
+describe('ResponsibleController::delete()', function () {
+    beforeEach(function () {
+        $this->responsible = Responsible::factory()->create();
+        $this->route = route('delete-responsible', ['responsibleId' => $this->responsible->uuid]);
+    });
+
+    it('should return 200 HTTP status-code if responsible deleted', function () {
+        $response = $this->deleteJson($this->route);
+        $response->assertOk();
+        $response->assertSee('Responsible deleted successfully.');
+    });
+
+    it('should return 404 HTTP status-code if responsible not found', function () {
+        $route = route('delete-responsible', $id = uuid_create());
+
+        $response = $this->deleteJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Responsible not found using ID $id provided.");
+    });
+});
