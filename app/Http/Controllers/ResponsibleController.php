@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\DTO\Responsible\UpdateResponsibleInputDTO;
 use Modules\Admin\UseCase\Responsible\CreateResponsibleUseCase;
+use Modules\Admin\UseCase\Responsible\DeleteResponsibleUseCase;
 use Modules\Admin\UseCase\Responsible\FindResponsibleByIdUseCase;
 use Modules\Admin\UseCase\Responsible\ListResponsiblesUseCase;
 use Modules\Admin\UseCase\Responsible\UpdateResponsibleUseCase;
@@ -67,6 +68,16 @@ class ResponsibleController extends Controller
         return response()->json([
             'message' => 'Responsible updated successfully.',
             'responsible' => $updatedResponsible,
+        ]);
+    }
+
+    public function delete(
+        DeleteResponsibleUseCase $useCase,
+        string $responsibleId
+    ) {
+        $useCase->execute($responsibleId);
+        return response()->json([
+            'message' => 'Responsible deleted successfully.',
         ]);
     }
 }

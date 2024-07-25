@@ -21,4 +21,5 @@ Route::controller(ResponsibleController::class)
         Route::get('/', 'index')->name('get-responsibles');
         Route::get('/{responsibleId}', 'show')->name('get-responsible');
         Route::put('/{responsibleId}', 'update')->name('update-responsible');
+        Route::delete('/{responsibleId}', 'delete')->name('delete-responsible');
     });
