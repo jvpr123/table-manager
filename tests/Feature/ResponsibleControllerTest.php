@@ -60,3 +60,25 @@ describe('ResponsibleController::index()', function () {
         expect($responseData['responsibles'])->toBeEmpty();
     });
 });
+
+describe('ResponsibleController::show()', function () {
+    it('should return 200 HTTP status-code with found responsible', function () {
+        $responsible = Responsible::factory()->create();
+        $route = route('get-responsible', ['responsibleId' => $responsible->uuid]);
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Responsible found successfully.');
+        expect($responseData['responsible']->id)->toBe($responsible->uuid);
+    });
+
+    it('should return 404 HTTP status-code if responsible not found', function () {
+        $route = route('get-responsible', ['responsibleId' => $id = uuid_create()]);
+
+        $response = $this->getJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Responsible not found using ID $id provided.");
+    });
+});
