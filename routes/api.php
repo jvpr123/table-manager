@@ -18,4 +18,5 @@ Route::controller(ResponsibleController::class)
     ->prefix('responsible')
     ->group(function () {
         Route::post('/', 'store')->name('store-responsible');
+        Route::get('/', 'index')->name('get-responsibles');
     });
