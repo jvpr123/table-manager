@@ -127,3 +127,24 @@ describe('LocalController::update()', function () {
         $response->assertSee("Local not found using ID $id provided.");
     });
 });
+
+describe('LocalController::delete()', function () {
+    beforeEach(function () {
+        $this->local = Local::factory()->create();
+        $this->route = route('delete-local', ['localId' => $this->local->uuid]);
+    });
+
+    it('should return 200 HTTP status-code if local deleted', function () {
+        $response = $this->deleteJson($this->route);
+        $response->assertOk();
+        $response->assertSee('Local deleted successfully.');
+    });
+
+    it('should return 404 HTTP status-code if local not found', function () {
+        $route = route('delete-local', $id = uuid_create());
+
+        $response = $this->deleteJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Local not found using ID $id provided.");
+    });
+});
