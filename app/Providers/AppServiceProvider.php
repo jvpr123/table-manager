@@ -4,21 +4,18 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Modules\Admin\Gateway\LocalGateway;
+use Modules\Admin\Gateway\ResponsibleGateway;
 use Modules\Admin\Repository\LocalRepository;
+use Modules\Admin\Repository\ResponsibleRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $this->app->bind(LocalGateway::class, LocalRepository::class);
+        $this->app->bind(ResponsibleGateway::class, ResponsibleRepository::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //
