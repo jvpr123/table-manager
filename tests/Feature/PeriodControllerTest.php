@@ -83,3 +83,40 @@ describe('PeriodController::show()', function () {
         $response->assertSee("Period not found using ID $id provided.");
     });
 });
+
+describe('PeriodController::update()', function () {
+    beforeEach(function () {
+        $this->period = Period::factory()->create();
+        $this->route = route('update-period', ['periodId' => $this->period->uuid]);
+    });
+
+    it('should return 200 HTTP status-code with updated period', function () {
+        $bodyData = Period::factory()->make()->toArray();
+
+        $response = $this->putJson($this->route, $bodyData);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Period updated successfully.');
+        expect($responseData['period']->id)->toBe($this->period->uuid);
+        expect($responseData['period']->time)->toBe($bodyData['time']);
+    });
+
+    it('should return 400 HTTP status-code with validation errors', function () {
+        $bodyData = ['time' => null];
+
+        $response = $this->putJson($this->route, $bodyData);
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertSee('Validation error.');
+        $response->assertJson(fn (AssertableJson $json) => $json->hasAll(['message', 'errors']));
+    });
+
+    it('should return 404 HTTP status-code if period not found', function () {
+        $route = route('update-period', $id = uuid_create());
+        $bodyData = Period::factory()->make()->toArray();
+
+        $response = $this->putJson($route, $bodyData);
+        $response->assertNotFound();
+        $response->assertSee("Period not found using ID $id provided.");
+    });
+});
