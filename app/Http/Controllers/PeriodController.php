@@ -6,6 +6,7 @@ use App\Http\Requests\Period\CreatePeriodRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Period\CreatePeriodInputDTO;
 use Modules\Admin\UseCase\Period\CreatePeriodUseCase;
+use Modules\Admin\UseCase\Period\ListPeriodsUseCase;
 
 class PeriodController extends Controller
 {
@@ -20,5 +21,15 @@ class PeriodController extends Controller
             'message' => 'Period created successfully.',
             'period' => $period,
         ], Response::HTTP_CREATED);
+    }
+
+    public function index(ListPeriodsUseCase $useCase)
+    {
+        $periods = $useCase->execute();
+
+        return response()->json([
+            'message' => 'Periods found successfully.',
+            'periods' => $periods,
+        ]);
     }
 }

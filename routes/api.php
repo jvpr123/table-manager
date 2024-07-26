@@ -29,4 +29,5 @@ Route::controller(PeriodController::class)
     ->prefix('period')
     ->group(function () {
         Route::post('/', 'store')->name('store-period');
+        Route::get('/', 'index')->name('get-periods');
     });
