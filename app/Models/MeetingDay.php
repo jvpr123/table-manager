@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class MeetingDay extends Model
 {
     use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'uuid',
+        'name',
+        'description',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $hidden = ['id'];
 }
