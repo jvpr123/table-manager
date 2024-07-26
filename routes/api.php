@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LocalController;
+use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ResponsibleController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,10 @@ Route::controller(ResponsibleController::class)
         Route::get('/{responsibleId}', 'show')->name('get-responsible');
         Route::put('/{responsibleId}', 'update')->name('update-responsible');
         Route::delete('/{responsibleId}', 'delete')->name('delete-responsible');
+    });
+
+Route::controller(PeriodController::class)
+    ->prefix('period')
+    ->group(function () {
+        Route::post('/', 'store')->name('store-period');
     });

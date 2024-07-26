@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Responsible\CreateResponsibleRequest;
-use App\Http\Requests\Responsible\UpdateResponsibleRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Responsible\CreateResponsibleInputDTO;
 use Modules\Admin\DTO\Responsible\UpdateResponsibleInputDTO;
