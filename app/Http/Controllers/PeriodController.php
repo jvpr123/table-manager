@@ -52,12 +52,12 @@ class PeriodController extends Controller
         CreatePeriodRequest $request,
         string $periodId
     ) {
-        $dto = new UpdatePeriodInputDTO(
+        $input = new UpdatePeriodInputDTO(
             id: $periodId,
             time: $request->validated('time')
         );
 
-        $updatedPeriod = $useCase->execute($dto);
+        $updatedPeriod = $useCase->execute($input);
 
         return response()->json([
             'message' => 'Period updated successfully.',
