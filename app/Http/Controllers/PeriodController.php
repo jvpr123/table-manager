@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Modules\Admin\DTO\Period\CreatePeriodInputDTO;
 use Modules\Admin\DTO\Period\UpdatePeriodInputDTO;
 use Modules\Admin\UseCase\Period\CreatePeriodUseCase;
+use Modules\Admin\UseCase\Period\DeletePeriodUseCase;
 use Modules\Admin\UseCase\Period\FindPeriodByIdUseCase;
 use Modules\Admin\UseCase\Period\ListPeriodsUseCase;
 use Modules\Admin\UseCase\Period\UpdatePeriodUseCase;
@@ -61,6 +62,14 @@ class PeriodController extends Controller
         return response()->json([
             'message' => 'Period updated successfully.',
             'period' => $updatedPeriod,
+        ]);
+    }
+
+    public function delete(DeletePeriodUseCase $useCase, string $periodId)
+    {
+        $useCase->execute($periodId);
+        return response()->json([
+            'message' => 'Period deleted successfully.',
         ]);
     }
 }
