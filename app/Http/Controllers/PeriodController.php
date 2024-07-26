@@ -6,6 +6,7 @@ use App\Http\Requests\Period\CreatePeriodRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Period\CreatePeriodInputDTO;
 use Modules\Admin\UseCase\Period\CreatePeriodUseCase;
+use Modules\Admin\UseCase\Period\FindPeriodByIdUseCase;
 use Modules\Admin\UseCase\Period\ListPeriodsUseCase;
 
 class PeriodController extends Controller
@@ -30,6 +31,16 @@ class PeriodController extends Controller
         return response()->json([
             'message' => 'Periods found successfully.',
             'periods' => $periods,
+        ]);
+    }
+
+    public function show(FindPeriodByIdUseCase $useCase, string $periodId)
+    {
+        $period = $useCase->execute($periodId);
+
+        return response()->json([
+            'message' => 'Period found successfully.',
+            'period' => $period,
         ]);
     }
 }
