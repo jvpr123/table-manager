@@ -61,3 +61,25 @@ describe('PeriodController::index()', function () {
         expect($responseData['periods'])->toBeEmpty();
     });
 });
+
+describe('PeriodController::show()', function () {
+    it('should return 200 HTTP status-code with found period', function () {
+        $period = Period::factory()->create();
+        $route = route('get-period', ['periodId' => $period->uuid]);
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Period found successfully.');
+        expect($responseData['period']->id)->toBe($period->uuid);
+    });
+
+    it('should return 404 HTTP status-code if period not found', function () {
+        $route = route('get-period', ['periodId' => $id = uuid_create()]);
+
+        $response = $this->getJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Period not found using ID $id provided.");
+    });
+});
