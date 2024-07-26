@@ -37,3 +37,27 @@ describe('PeriodController::store()', function () {
         $response->assertSee('Database error.');
     });
 });
+
+describe('PeriodController::index()', function () {
+    it('should return 200 HTTP status-code with found periods', function () {
+        $periods = Period::factory()->count(5)->create();
+        $route = route('get-periods');
+
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Periods found successfully.');
+        expect($responseData['periods'])->toHaveCount($periods->count());
+    });
+
+    it('should return 200 HTTP status-code with empty array if no period found', function () {
+        $route = route('get-periods');
+        $response = $this->getJson($route);
+        $response->assertOk();
+
+        $responseData = $response->getOriginalContent();
+        expect($responseData['message'])->toBe('Periods found successfully.');
+        expect($responseData['periods'])->toBeEmpty();
+    });
+});
