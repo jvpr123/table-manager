@@ -56,7 +56,7 @@ describe('UpdateMeetingUseCase unit tests', function () {
             ->once();
 
         expect(fn () => $this->useCase->execute($this->input))
-            ->toThrow(new EntityNotFoundException(Meeting::class, $this->input->id));
+            ->toThrow(new EntityNotFoundException('Meeting', $this->input->id));
     });
 
     it('should throw exception on getting meeting error', function () {
