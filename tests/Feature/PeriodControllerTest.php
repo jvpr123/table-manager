@@ -120,3 +120,24 @@ describe('PeriodController::update()', function () {
         $response->assertSee("Period not found using ID $id provided.");
     });
 });
+
+describe('PeriodController::delete()', function () {
+    beforeEach(function () {
+        $this->period = Period::factory()->create();
+        $this->route = route('delete-period', ['periodId' => $this->period->uuid]);
+    });
+
+    it('should return 200 HTTP status-code if period deleted', function () {
+        $response = $this->deleteJson($this->route);
+        $response->assertOk();
+        $response->assertSee('Period deleted successfully.');
+    });
+
+    it('should return 404 HTTP status-code if period not found', function () {
+        $route = route('delete-period', $id = uuid_create());
+
+        $response = $this->deleteJson($route);
+        $response->assertNotFound();
+        $response->assertSee("Period not found using ID $id provided.");
+    });
+});
