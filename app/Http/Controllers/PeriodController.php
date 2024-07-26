@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Period\CreatePeriodRequest;
 use Illuminate\Http\Response;
 use Modules\Admin\DTO\Period\CreatePeriodInputDTO;
+use Modules\Admin\DTO\Period\UpdatePeriodInputDTO;
 use Modules\Admin\UseCase\Period\CreatePeriodUseCase;
 use Modules\Admin\UseCase\Period\FindPeriodByIdUseCase;
 use Modules\Admin\UseCase\Period\ListPeriodsUseCase;
+use Modules\Admin\UseCase\Period\UpdatePeriodUseCase;
 
 class PeriodController extends Controller
 {
@@ -41,6 +43,24 @@ class PeriodController extends Controller
         return response()->json([
             'message' => 'Period found successfully.',
             'period' => $period,
+        ]);
+    }
+
+    public function update(
+        UpdatePeriodUseCase $useCase,
+        CreatePeriodRequest $request,
+        string $periodId
+    ) {
+        $dto = new UpdatePeriodInputDTO(
+            id: $periodId,
+            time: $request->validated('time')
+        );
+
+        $updatedPeriod = $useCase->execute($dto);
+
+        return response()->json([
+            'message' => 'Period updated successfully.',
+            'period' => $updatedPeriod,
         ]);
     }
 }

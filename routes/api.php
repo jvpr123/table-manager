@@ -31,4 +31,5 @@ Route::controller(PeriodController::class)
         Route::post('/', 'store')->name('store-period');
         Route::get('/', 'index')->name('get-periods');
         Route::get('/{periodId}', 'show')->name('get-period');
+        Route::put('/{periodId}', 'update')->name('update-period');
     });
