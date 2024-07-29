@@ -22,6 +22,18 @@ class MeetingGroup extends Model
 
     protected $hidden = ['id'];
 
+    public function responsibles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Responsible::class,
+            'meeting_group_responsibles',
+            'meeting_group_id',
+            'responsible_id',
+            'uuid',
+            'uuid',
+        );
+    }
+
     public function periods(): BelongsToMany
     {
         return $this->belongsToMany(
