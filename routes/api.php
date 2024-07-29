@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LocalController;
+use App\Http\Controllers\MeetingGroupController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ResponsibleController;
 use Illuminate\Support\Facades\Route;
@@ -33,4 +34,10 @@ Route::controller(PeriodController::class)
         Route::get('/{periodId}', 'show')->name('get-period');
         Route::put('/{periodId}', 'update')->name('update-period');
         Route::delete('/{periodId}', 'delete')->name('delete-period');
+    });
+
+Route::controller(MeetingGroupController::class)
+    ->prefix('meeting-group')
+    ->group(function () {
+        Route::post('/', 'store')->name('store-meeting-group');
     });
