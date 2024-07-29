@@ -33,4 +33,16 @@ class MeetingGroup extends Model
             'uuid',
         );
     }
+
+    public function locals(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Local::class,
+            'meeting_group_locals',
+            'meeting_group_id',
+            'local_id',
+            'uuid',
+            'uuid',
+        );
+    }
 }

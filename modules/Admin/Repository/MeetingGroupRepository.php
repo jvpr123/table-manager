@@ -27,4 +27,11 @@ class MeetingGroupRepository implements MeetingGroupGateway
             ->periods()
             ->toggle($periodsIds);
     }
+
+    public function toggleLocals(string $meetingGroupId, array $localsIds): void
+    {
+        MeetingGroupModel::firstWhere('uuid', $meetingGroupId)
+            ->locals()
+            ->toggle($localsIds);
+    }
 }
