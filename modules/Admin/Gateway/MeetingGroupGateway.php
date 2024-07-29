@@ -7,5 +7,5 @@ use Modules\Admin\Domain\Entity\MeetingGroup;
 interface MeetingGroupGateway
 {
     public function create(MeetingGroup $meetingGroup): void;
-    public function relatePeriods(string $meetingGroupId, array $periodsIds): void;
+    public function togglePeriods(string $meetingGroupId, array $periodsIds): void;
 }

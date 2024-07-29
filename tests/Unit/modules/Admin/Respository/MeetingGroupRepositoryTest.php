@@ -40,26 +40,46 @@ describe('MeetingGroupRepository create() unit tests', function () {
     });
 });
 
-describe('MeetingGroupRepository relatePeriods() unit tests', function () {
+describe('MeetingGroupRepository togglePeriods() unit tests', function () {
     beforeEach(function () {
-        $this->periods = Period::factory()->count(5)->create();
         $this->meetingGroup = MeetingGroupModel::factory()->create();
-        $this->meetingGroup->periods()->save($this->periods[0]);
+        $this->periods = Period::factory()->count(2)->create();
 
         $this->repository = new MeetingGroupRepository();
     });
 
     it('should relate Periods to Meeting Group without detaching successfully', function () {
+        $this->meetingGroup->periods()->toggle(Period::factory()->create());
         $periodsIds = $this->periods->map(fn (Period $period) => $period->uuid);
-        $output = $this->repository->relatePeriods(
+
+        $output = $this->repository->togglePeriods(
             meetingGroupId: $this->meetingGroup->uuid,
             periodsIds: $periodsIds->toArray(),
         );
 
         expect($output)->toBeNull();
-        expect($this->meetingGroup->periods)->toHaveCount($this->periods->count());
+        expect($this->meetingGroup->periods)->toHaveCount(3);
         $periodsIds->map(function (string $periodId) {
             $this->assertDatabaseHas('meeting_group_periods', [
+                'meeting_group_id' => $this->meetingGroup->uuid,
+                'period_id' => $periodId,
+            ]);
+        });
+    });
+
+    it('should unrelate Periods to Meeting Group successfully', function () {
+        $periodsIds = $this->periods->map(fn (Period $period) => $period->uuid);
+        $this->meetingGroup->periods()->toggle($periodsIds);
+
+        $output = $this->repository->togglePeriods(
+            meetingGroupId: $this->meetingGroup->uuid,
+            periodsIds: $periodsIds->toArray(),
+        );
+
+        expect($output)->toBeNull();
+        expect($this->meetingGroup->periods)->toBeEmpty();
+        $periodsIds->map(function (string $periodId) {
+            $this->assertDatabaseMissing('meeting_group_periods', [
                 'meeting_group_id' => $this->meetingGroup->uuid,
                 'period_id' => $periodId,
             ]);

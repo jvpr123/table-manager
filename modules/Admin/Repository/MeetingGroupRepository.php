@@ -21,10 +21,10 @@ class MeetingGroupRepository implements MeetingGroupGateway
         $meetingGroupModel->saveOrFail();
     }
 
-    public function relatePeriods(string $meetingGroupId, array $periodsIds): void
+    public function togglePeriods(string $meetingGroupId, array $periodsIds): void
     {
         MeetingGroupModel::firstWhere('uuid', $meetingGroupId)
             ->periods()
-            ->syncWithoutDetaching($periodsIds);
+            ->toggle($periodsIds);
     }
 }
