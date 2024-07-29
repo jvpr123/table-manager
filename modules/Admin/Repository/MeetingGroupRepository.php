@@ -21,6 +21,11 @@ class MeetingGroupRepository implements MeetingGroupGateway
         $meetingGroupModel->saveOrFail();
     }
 
+    public function meetingGroupExists(string $meetingGroupId): bool
+    {
+        return (bool) MeetingGroupModel::where('uuid', $meetingGroupId)->exists();
+    }
+
     public function toggleResponsibles(string $meetingGroupId, array $responsiblesIds): void
     {
         MeetingGroupModel::firstWhere('uuid', $meetingGroupId)
