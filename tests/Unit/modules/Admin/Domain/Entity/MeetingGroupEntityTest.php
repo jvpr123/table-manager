@@ -2,8 +2,12 @@
 
 namespace Tests\Unit\Modules\Shared\Domain\Entity;
 
+use App\Models\Responsible as ResponsibleModel;
+use Modules\Admin\Domain\Entity\Local;
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Domain\Entity\MeetingGroup;
 use Modules\Shared\Domain\ValueObject\UUID;
+use Modules\Shared\Exceptions\InvalidEntityProvidedException;
 
 describe('MeetingGroup Entity unit tests', function () {
     beforeEach(function () {
@@ -42,5 +46,61 @@ describe('MeetingGroup Entity unit tests', function () {
     it('should update Meeting Group description successfully', function () {
         $this->meetingGroup->setDescription($description = 'updated_description');
         expect($this->meetingGroup->getDescription())->toBe($description);
+    });
+
+    // Responsibles getter/setter
+    it('should define Meeting Group related Responsibles successfully', function () {
+        $responsibles = ResponsibleModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (ResponsibleModel $res) => new Responsible(
+                id: new UUID($res->uuid),
+                name: $res->name,
+                createdAt: $res->created_at,
+                updatedAt: $res->updated_at,
+            ))
+            ->toArray();
+
+        $output = $this->meetingGroup->setResponsibles($responsibles);
+        expect($output)->toBe($responsibles);
+    });
+
+    it('should throw exception if invalid entity is provided to responsibles setter', function () {
+        $responsibles = ResponsibleModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (ResponsibleModel $res) => new Responsible(
+                id: new UUID($res->uuid),
+                name: $res->name,
+                createdAt: $res->created_at,
+                updatedAt: $res->updated_at,
+            ))
+            ->toArray();
+
+        $responsibles[] = new Local(title: 'local_title');
+
+        $this->meetingGroup->setResponsibles($responsibles);
+    })->throws(InvalidEntityProvidedException::class);
+
+    it('should return an empty array if Meeting Group has no related Responsibles successfully', function () {
+        expect($this->meetingGroup->getResponsibles())->toBeEmpty();
+    });
+
+    it('should return Meeting Group related Responsibles successfully', function () {
+        $responsibles = ResponsibleModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (ResponsibleModel $res) => new Responsible(
+                id: new UUID($res->uuid),
+                name: $res->name,
+                createdAt: $res->created_at,
+                updatedAt: $res->updated_at,
+            ))
+            ->toArray();
+
+        $this->meetingGroup->setResponsibles($responsibles);
+
+        $output = $this->meetingGroup->getResponsibles();
+        expect($output)->toBe($responsibles);
     });
 });
