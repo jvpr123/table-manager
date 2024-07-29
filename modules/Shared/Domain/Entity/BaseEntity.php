@@ -4,6 +4,7 @@ namespace Modules\Shared\Domain\Entity;
 
 use Carbon\Carbon;
 use Modules\Shared\Domain\ValueObject\UUID;
+use Modules\Shared\Exceptions\InvalidEntityProvidedException;
 
 abstract class BaseEntity
 {
@@ -36,5 +37,12 @@ abstract class BaseEntity
     public function setUpdatedAt(Carbon $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    protected function verifyEntityType(string $entityUnderValidation, string $validEntity): void
+    {
+        if ($entityUnderValidation !== $validEntity) {
+            throw new InvalidEntityProvidedException($entityUnderValidation, $validEntity);
+        }
     }
 }
