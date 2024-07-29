@@ -5,6 +5,7 @@ namespace Tests\Unit\Modules\Admin\Repository;
 use App\Models\Local;
 use App\Models\MeetingGroup as MeetingGroupModel;
 use App\Models\Period;
+use App\Models\Responsible;
 use Modules\Admin\Domain\Entity\MeetingGroup;
 use Modules\Admin\Repository\MeetingGroupRepository;
 
@@ -38,6 +39,53 @@ describe('MeetingGroupRepository create() unit tests', function () {
         })->toThrow(new \Exception('Error saving meeting group.'));
 
         $this->assertDatabaseMissing('meeting_groups', ['uuid' => $this->meetingGroup->getId()->value]);
+    });
+});
+
+describe('MeetingGroupRepository toggleResponsibles() unit tests', function () {
+    beforeEach(function () {
+        $this->meetingGroup = MeetingGroupModel::factory()->create();
+        $this->responsibles = Responsible::factory()->count(2)->create();
+
+        $this->repository = new MeetingGroupRepository();
+    });
+
+    it('should relate Periods to Meeting Group without detaching successfully', function () {
+        $this->meetingGroup->responsibles()->toggle(Responsible::factory()->create());
+        $responsiblesIds = $this->responsibles->map(fn (Responsible $responsible) => $responsible->uuid);
+
+        $output = $this->repository->toggleResponsibles(
+            meetingGroupId: $this->meetingGroup->uuid,
+            responsiblesIds: $responsiblesIds->toArray(),
+        );
+
+        expect($output)->toBeNull();
+        expect($this->meetingGroup->responsibles)->toHaveCount(3);
+        $responsiblesIds->map(function (string $responsibleId) {
+            $this->assertDatabaseHas('meeting_group_responsibles', [
+                'meeting_group_id' => $this->meetingGroup->uuid,
+                'responsible_id' => $responsibleId,
+            ]);
+        });
+    });
+
+    it('should unrelate Periods to Meeting Group successfully', function () {
+        $responsiblesIds = $this->responsibles->map(fn (Responsible $responsible) => $responsible->uuid);
+        $this->meetingGroup->responsibles()->toggle($responsiblesIds);
+
+        $output = $this->repository->toggleResponsibles(
+            meetingGroupId: $this->meetingGroup->uuid,
+            responsiblesIds: $responsiblesIds->toArray(),
+        );
+
+        expect($output)->toBeNull();
+        expect($this->meetingGroup->responsible)->toBeEmpty();
+        $responsiblesIds->map(function (string $responsibleId) {
+            $this->assertDatabaseMissing('meeting_group_responsibles', [
+                'meeting_group_id' => $this->meetingGroup->uuid,
+                'responsible_id' => $responsibleId,
+            ]);
+        });
     });
 });
 

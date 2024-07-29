@@ -40,4 +40,5 @@ Route::controller(MeetingGroupController::class)
     ->prefix('meeting-group')
     ->group(function () {
         Route::post('/', 'store')->name('store-meeting-group');
+        Route::patch('/relate-periods', 'relatePeriods')->name('relate-periods');
     });
