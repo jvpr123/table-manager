@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Modules\Admin\Repository;
 
+use App\Models\Local;
 use App\Models\MeetingGroup as MeetingGroupModel;
 use App\Models\Period;
 use Modules\Admin\Domain\Entity\MeetingGroup;
@@ -82,6 +83,53 @@ describe('MeetingGroupRepository togglePeriods() unit tests', function () {
             $this->assertDatabaseMissing('meeting_group_periods', [
                 'meeting_group_id' => $this->meetingGroup->uuid,
                 'period_id' => $periodId,
+            ]);
+        });
+    });
+});
+
+describe('MeetingGroupRepository toggleLocals() unit tests', function () {
+    beforeEach(function () {
+        $this->meetingGroup = MeetingGroupModel::factory()->create();
+        $this->locals = Local::factory()->count(2)->create();
+
+        $this->repository = new MeetingGroupRepository();
+    });
+
+    it('should relate Locals to Meeting Group without detaching successfully', function () {
+        $this->meetingGroup->locals()->toggle(Local::factory()->create());
+        $localsIds = $this->locals->map(fn (Local $local) => $local->uuid);
+
+        $output = $this->repository->toggleLocals(
+            meetingGroupId: $this->meetingGroup->uuid,
+            localsIds: $localsIds->toArray(),
+        );
+
+        expect($output)->toBeNull();
+        expect($this->meetingGroup->locals)->toHaveCount(3);
+        $localsIds->map(function (string $localId) {
+            $this->assertDatabaseHas('meeting_group_locals', [
+                'meeting_group_id' => $this->meetingGroup->uuid,
+                'local_id' => $localId,
+            ]);
+        });
+    });
+
+    it('should unrelate Locals to Meeting Group successfully', function () {
+        $localsIds = $this->locals->map(fn (Local $local) => $local->uuid);
+        $this->meetingGroup->locals()->toggle($localsIds);
+
+        $output = $this->repository->toggleLocals(
+            meetingGroupId: $this->meetingGroup->uuid,
+            localsIds: $localsIds->toArray(),
+        );
+
+        expect($output)->toBeNull();
+        expect($this->meetingGroup->locals)->toBeEmpty();
+        $localsIds->map(function (string $localId) {
+            $this->assertDatabaseMissing('meeting_group_locals', [
+                'meeting_group_id' => $this->meetingGroup->uuid,
+                'local_id' => $localId,
             ]);
         });
     });
