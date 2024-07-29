@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('meeting_days', function (Blueprint $table) {
+        Schema::create('meeting_groups', function (Blueprint $table) {
             $table->id();
-            $table->uuid()->unique('meeting_day_unique_ix');
+            $table->uuid()->unique('meeting_group_unique_ix');
             $table->string('name');
             $table->string('description')->nullable();
             $table->timestamps();
@@ -19,6 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('meeting_days');
+        Schema::dropIfExists('meeting_groups');
     }
 };

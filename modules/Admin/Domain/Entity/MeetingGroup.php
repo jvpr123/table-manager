@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Modules\Shared\Domain\Entity\BaseEntity;
 use Modules\Shared\Domain\ValueObject\UUID;
 
-class MeetingDay extends BaseEntity
+class MeetingGroup extends BaseEntity
 {
     private string $name;
     private ?string $description;
