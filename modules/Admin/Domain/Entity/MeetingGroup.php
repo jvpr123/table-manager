@@ -11,6 +11,11 @@ class MeetingGroup extends BaseEntity
     private string $name;
     private ?string $description;
 
+    /**
+     * @var Responsible[]
+     */
+    private array $responsibles = [];
+
     public function __construct(
         string $name,
         ?string $description = null,
@@ -42,5 +47,27 @@ class MeetingGroup extends BaseEntity
     public function setDescription(?string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return Responsible[]
+     */
+    public function getResponsibles(): array
+    {
+        return $this->responsibles;
+    }
+
+    /**
+     * @param Responsible[] $responsibles
+     * @return Responsible[]
+     */
+    public function setResponsibles(array $responsibles): array
+    {
+        foreach ($responsibles as $responsible) {
+            $this->verifyEntityType($responsible::class, Responsible::class);
+            $this->responsibles[] = $responsible;
+        }
+
+        return $this->responsibles;
     }
 }
