@@ -42,6 +42,23 @@ describe('MeetingGroupRepository create() unit tests', function () {
     });
 });
 
+describe('MeetingGroupRepository meetingGroupExists() unit tests', function () {
+    beforeEach(function () {
+        $this->meetingGroupId = MeetingGroupModel::factory()->create()->uuid;
+        $this->repository = new MeetingGroupRepository();
+    });
+
+    it('should return true if Meeting Group exists', function () {
+        $output = $this->repository->meetingGroupExists($this->meetingGroupId);
+        expect($output)->toBeTrue();
+    });
+
+    it('should return false if Meeting Group don`t exists', function () {
+        $output = $this->repository->meetingGroupExists(uuid_create());
+        expect($output)->toBeFalse();
+    });
+});
+
 describe('MeetingGroupRepository toggleResponsibles() unit tests', function () {
     beforeEach(function () {
         $this->meetingGroup = MeetingGroupModel::factory()->create();
