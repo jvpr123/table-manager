@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class MeetingGroup extends Model
 {
@@ -20,4 +21,16 @@ class MeetingGroup extends Model
     ];
 
     protected $hidden = ['id'];
+
+    public function periods(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Period::class,
+            'meeting_group_periods',
+            'meeting_group_id',
+            'period_id',
+            'uuid',
+            'uuid',
+        );
+    }
 }
