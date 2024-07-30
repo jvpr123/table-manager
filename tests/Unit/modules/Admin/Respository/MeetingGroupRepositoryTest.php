@@ -4,10 +4,14 @@ namespace Tests\Unit\Modules\Admin\Repository;
 
 use App\Models\Local;
 use App\Models\MeetingGroup as MeetingGroupModel;
+use App\Models\Responsible as ResponsibleModel;
 use App\Models\Period;
-use App\Models\Responsible;
+use Mockery;
 use Modules\Admin\Domain\Entity\MeetingGroup;
+use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Repository\MeetingGroupRepository;
+use Modules\Admin\Transformer\MeetingGroupTransformer;
+use Modules\Admin\Transformer\ResponsibleTransformer;
 
 describe('MeetingGroupRepository create() unit tests', function () {
     beforeEach(function () {
@@ -16,7 +20,13 @@ describe('MeetingGroupRepository create() unit tests', function () {
             description: 'meeting_group_description',
         );
 
-        $this->repository = new MeetingGroupRepository();
+        $this->meetingGroupTransformer = Mockery::mock(MeetingGroupTransformer::class);
+        $this->responsibleTransformer = Mockery::mock(ResponsibleTransformer::class);
+
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
     });
 
     it('should register a Meeting Group in database successfully', function () {
@@ -45,7 +55,14 @@ describe('MeetingGroupRepository create() unit tests', function () {
 describe('MeetingGroupRepository meetingGroupExists() unit tests', function () {
     beforeEach(function () {
         $this->meetingGroupId = MeetingGroupModel::factory()->create()->uuid;
-        $this->repository = new MeetingGroupRepository();
+
+        $this->meetingGroupTransformer = Mockery::mock(MeetingGroupTransformer::class);
+        $this->responsibleTransformer = Mockery::mock(ResponsibleTransformer::class);
+
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
     });
 
     it('should return true if Meeting Group exists', function () {
@@ -59,17 +76,66 @@ describe('MeetingGroupRepository meetingGroupExists() unit tests', function () {
     });
 });
 
+describe('MeetingGroupRepository getMeetingGroupWithResponsibles() unit tests', function () {
+    beforeEach(function () {
+        $this->meetingGroup = MeetingGroupModel::factory()->create();
+
+        $this->meetingGroupTransformer = new MeetingGroupTransformer();
+        $this->responsibleTransformer = new ResponsibleTransformer();
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
+    });
+
+    it('should return a Meeting Group with related Responsibles successfully', function () {
+        $this->responsibles = ResponsibleModel::factory()->count(2)->create();
+        $this->responsiblesIds = $this->responsibles
+            ->map(fn (ResponsibleModel $rm) => $rm->uuid)
+            ->toArray();
+        $this->meetingGroup->responsibles()->sync($this->responsiblesIds);
+
+        $output = $this->repository->getMeetingGroupWithResponsibles($this->meetingGroup->uuid);
+        expect($output)->toBeInstanceOf(MeetingGroup::class);
+        expect($output->getId()->value)->toBe($this->meetingGroup->uuid);
+        expect($output->getResponsibles())->toHaveCount($this->responsibles->count());
+
+        foreach ($output->getResponsibles() as $key => $res) {
+            expect($res)->toBeInstanceOf(Responsible::class);
+            expect($res->getId()->value)->toBe($this->responsibles[$key]->uuid);
+        }
+    });
+
+    it('should return a Meeting Group with empty responsibles if there is no related Responsible', function () {
+        $output = $this->repository->getMeetingGroupWithResponsibles($this->meetingGroup->uuid);
+        expect($output)->toBeInstanceOf(MeetingGroup::class);
+        expect($output->getId()->value)->toBe($this->meetingGroup->uuid);
+        expect($output->getResponsibles())->toBeEmpty();
+    });
+
+    it('should return null if Meeting Group not found', function () {
+        $output = $this->repository->getMeetingGroupWithResponsibles(uuid_create());
+        expect($output)->toBeNull();
+    });
+});
+
 describe('MeetingGroupRepository toggleResponsibles() unit tests', function () {
     beforeEach(function () {
         $this->meetingGroup = MeetingGroupModel::factory()->create();
-        $this->responsibles = Responsible::factory()->count(2)->create();
+        $this->responsibles = ResponsibleModel::factory()->count(2)->create();
 
-        $this->repository = new MeetingGroupRepository();
+        $this->meetingGroupTransformer = Mockery::mock(MeetingGroupTransformer::class);
+        $this->responsibleTransformer = Mockery::mock(ResponsibleTransformer::class);
+
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
     });
 
     it('should relate Periods to Meeting Group without detaching successfully', function () {
-        $this->meetingGroup->responsibles()->toggle(Responsible::factory()->create());
-        $responsiblesIds = $this->responsibles->map(fn (Responsible $responsible) => $responsible->uuid);
+        $this->meetingGroup->responsibles()->toggle(ResponsibleModel::factory()->create());
+        $responsiblesIds = $this->responsibles->map(fn (ResponsibleModel $responsible) => $responsible->uuid);
 
         $output = $this->repository->toggleResponsibles(
             meetingGroupId: $this->meetingGroup->uuid,
@@ -87,7 +153,7 @@ describe('MeetingGroupRepository toggleResponsibles() unit tests', function () {
     });
 
     it('should unrelate Periods to Meeting Group successfully', function () {
-        $responsiblesIds = $this->responsibles->map(fn (Responsible $responsible) => $responsible->uuid);
+        $responsiblesIds = $this->responsibles->map(fn (ResponsibleModel $responsible) => $responsible->uuid);
         $this->meetingGroup->responsibles()->toggle($responsiblesIds);
 
         $output = $this->repository->toggleResponsibles(
@@ -111,7 +177,13 @@ describe('MeetingGroupRepository togglePeriods() unit tests', function () {
         $this->meetingGroup = MeetingGroupModel::factory()->create();
         $this->periods = Period::factory()->count(2)->create();
 
-        $this->repository = new MeetingGroupRepository();
+        $this->meetingGroupTransformer = Mockery::mock(MeetingGroupTransformer::class);
+        $this->responsibleTransformer = Mockery::mock(ResponsibleTransformer::class);
+
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
     });
 
     it('should relate Periods to Meeting Group without detaching successfully', function () {
@@ -158,7 +230,13 @@ describe('MeetingGroupRepository toggleLocals() unit tests', function () {
         $this->meetingGroup = MeetingGroupModel::factory()->create();
         $this->locals = Local::factory()->count(2)->create();
 
-        $this->repository = new MeetingGroupRepository();
+        $this->meetingGroupTransformer = Mockery::mock(MeetingGroupTransformer::class);
+        $this->responsibleTransformer = Mockery::mock(ResponsibleTransformer::class);
+
+        $this->repository = new MeetingGroupRepository(
+            $this->meetingGroupTransformer,
+            $this->responsibleTransformer,
+        );
     });
 
     it('should relate Locals to Meeting Group without detaching successfully', function () {
