@@ -16,6 +16,11 @@ class MeetingGroup extends BaseEntity
      */
     private array $responsibles = [];
 
+    /**
+     * @var Period[]
+     */
+    private array $periods = [];
+
     public function __construct(
         string $name,
         ?string $description = null,
@@ -69,5 +74,27 @@ class MeetingGroup extends BaseEntity
         }
 
         return $this->responsibles;
+    }
+
+    /**
+     * @return Period[]
+     */
+    public function getPeriods(): array
+    {
+        return $this->periods;
+    }
+
+    /**
+     * @param Period[] $periods
+     * @return Period[]
+     */
+    public function setPeriods(array $periods): array
+    {
+        foreach ($periods as $period) {
+            $this->verifyEntityType($period::class, Period::class);
+            $this->periods[] = $period;
+        }
+
+        return $this->periods;
     }
 }
