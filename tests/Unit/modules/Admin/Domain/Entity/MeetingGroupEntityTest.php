@@ -3,9 +3,11 @@
 namespace Tests\Unit\Modules\Shared\Domain\Entity;
 
 use App\Models\Responsible as ResponsibleModel;
+use App\Models\Period as PeriodModel;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Domain\Entity\MeetingGroup;
+use Modules\Admin\Domain\Entity\Period;
 use Modules\Shared\Domain\ValueObject\UUID;
 use Modules\Shared\Exceptions\InvalidEntityProvidedException;
 
@@ -102,5 +104,61 @@ describe('MeetingGroup Entity unit tests', function () {
 
         $output = $this->meetingGroup->getResponsibles();
         expect($output)->toBe($responsibles);
+    });
+
+    // Periods getter/setter
+    it('should define Meeting Group related Periods successfully', function () {
+        $periods = PeriodModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (PeriodModel $per) => new Period(
+                id: new UUID($per->uuid),
+                time: $per->time,
+                createdAt: $per->created_at,
+                updatedAt: $per->updated_at,
+            ))
+            ->toArray();
+
+        $output = $this->meetingGroup->setPeriods($periods);
+        expect($output)->toBe($periods);
+    });
+
+    it('should throw exception if invalid entity is provided to periods setter', function () {
+        $periods = PeriodModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (PeriodModel $per) => new Period(
+                id: new UUID($per->uuid),
+                time: $per->time,
+                createdAt: $per->created_at,
+                updatedAt: $per->updated_at,
+            ))
+            ->toArray();
+
+        $periods[] = new Local(title: 'local_title');
+
+        $this->meetingGroup->setPeriods($periods);
+    })->throws(InvalidEntityProvidedException::class);
+
+    it('should return an empty array if Meeting Group has no related Periods successfully', function () {
+        expect($this->meetingGroup->getPeriods())->toBeEmpty();
+    });
+
+    it('should return Meeting Group related Periods successfully', function () {
+        $periods = PeriodModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (PeriodModel $per) => new Period(
+                id: new UUID($per->uuid),
+                time: $per->time,
+                createdAt: $per->created_at,
+                updatedAt: $per->updated_at,
+            ))
+            ->toArray();
+
+        $this->meetingGroup->setPeriods($periods);
+
+        $output = $this->meetingGroup->getPeriods();
+        expect($output)->toBe($periods);
     });
 });
