@@ -15,11 +15,15 @@ class MeetingGroup extends BaseEntity
      * @var Responsible[]
      */
     private array $responsibles = [];
-
     /**
      * @var Period[]
      */
     private array $periods = [];
+
+    /**
+     * @var Local[]
+     */
+    private array $locals = [];
 
     public function __construct(
         string $name,
@@ -96,5 +100,27 @@ class MeetingGroup extends BaseEntity
         }
 
         return $this->periods;
+    }
+
+    /**
+     * @return Local[]
+     */
+    public function getLocals(): array
+    {
+        return $this->locals;
+    }
+
+    /**
+     * @param Local[] $locals
+     * @return Local[]
+     */
+    public function setLocals(array $locals): array
+    {
+        foreach ($locals as $local) {
+            $this->verifyEntityType($local::class, Local::class);
+            $this->locals[] = $local;
+        }
+
+        return $this->locals;
     }
 }
