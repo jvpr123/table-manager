@@ -3,11 +3,20 @@
 namespace Modules\Admin\Repository;
 
 use App\Models\MeetingGroup as MeetingGroupModel;
+use App\Models\Responsible as ResponsibleModel;
 use Modules\Admin\Domain\Entity\MeetingGroup;
 use Modules\Admin\Gateway\MeetingGroupGateway;
+use Modules\Admin\Transformer\MeetingGroupTransformer;
+use Modules\Admin\Transformer\ResponsibleTransformer;
 
 class MeetingGroupRepository implements MeetingGroupGateway
 {
+    public function __construct(
+        private MeetingGroupTransformer $meetingGroupTransformer,
+        private ResponsibleTransformer $responsibleTransformer,
+    ) {
+    }
+
     public function create(MeetingGroup $meetingGroup): void
     {
         $meetingGroupModel = new MeetingGroupModel([
@@ -24,6 +33,23 @@ class MeetingGroupRepository implements MeetingGroupGateway
     public function meetingGroupExists(string $meetingGroupId): bool
     {
         return (bool) MeetingGroupModel::where('uuid', $meetingGroupId)->exists();
+    }
+
+    public function getMeetingGroupWithResponsibles(string $id): ?MeetingGroup
+    {
+        $meetingGroupModel = MeetingGroupModel::with('responsibles')
+            ->where('uuid', $id)
+            ->first();
+
+        if (!$meetingGroupModel) return null;
+
+        $meetingGroup = $this->meetingGroupTransformer->transform($meetingGroupModel);
+        $responsibles = $meetingGroupModel->responsibles->map(
+            fn (ResponsibleModel $res) => $this->responsibleTransformer->transform($res)
+        );
+        $meetingGroup->setResponsibles($responsibles->toArray());
+
+        return $meetingGroup;
     }
 
     public function toggleResponsibles(string $meetingGroupId, array $responsiblesIds): void
