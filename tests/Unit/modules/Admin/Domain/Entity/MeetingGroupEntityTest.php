@@ -4,6 +4,7 @@ namespace Tests\Unit\Modules\Shared\Domain\Entity;
 
 use App\Models\Responsible as ResponsibleModel;
 use App\Models\Period as PeriodModel;
+use App\Models\Local as LocalModel;
 use Modules\Admin\Domain\Entity\Local;
 use Modules\Admin\Domain\Entity\Responsible;
 use Modules\Admin\Domain\Entity\MeetingGroup;
@@ -160,5 +161,61 @@ describe('MeetingGroup Entity unit tests', function () {
 
         $output = $this->meetingGroup->getPeriods();
         expect($output)->toBe($periods);
+    });
+
+    // Locals getter/setter
+    it('should define Meeting Group related Locals successfully', function () {
+        $locals = LocalModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (LocalModel $loc) => new Local(
+                id: new UUID($loc->uuid),
+                title: $loc->title,
+                createdAt: $loc->created_at,
+                updatedAt: $loc->updated_at,
+            ))
+            ->toArray();
+
+        $output = $this->meetingGroup->setLocals($locals);
+        expect($output)->toBe($locals);
+    });
+
+    it('should throw exception if invalid entity is provided to locals setter', function () {
+        $locals = LocalModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (LocalModel $loc) => new Local(
+                id: new UUID($loc->uuid),
+                title: $loc->title,
+                createdAt: $loc->created_at,
+                updatedAt: $loc->updated_at,
+            ))
+            ->toArray();
+
+        $locals[] = new Responsible(name: 'responsible_name');
+
+        $this->meetingGroup->setLocals($locals);
+    })->throws(InvalidEntityProvidedException::class);
+
+    it('should return an empty array if Meeting Group has no related Locals successfully', function () {
+        expect($this->meetingGroup->getLocals())->toBeEmpty();
+    });
+
+    it('should return Meeting Group related Locals successfully', function () {
+        $locals = LocalModel::factory()
+            ->count(2)
+            ->create()
+            ->map(fn (LocalModel $loc) => new Local(
+                id: new UUID($loc->uuid),
+                title: $loc->title,
+                createdAt: $loc->created_at,
+                updatedAt: $loc->updated_at,
+            ))
+            ->toArray();
+
+        $this->meetingGroup->setLocals($locals);
+
+        $output = $this->meetingGroup->getLocals();
+        expect($output)->toBe($locals);
     });
 });
